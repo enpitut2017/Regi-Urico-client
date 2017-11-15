@@ -19,15 +19,9 @@ class App extends Component {
   }
   
   handleEventIdChange(event) {
-    function isNumber(x){
-      if( typeof(x) !== 'number' && typeof(x) !== 'string' )
-        return false;
-      else
-        return (x == parseFloat(x) && isFinite(x));
-    }
     let app = this;
     let newEventId = event.target.value;
-    if (!isNumber(newEventId)) {
+    if (Number.isNaN(parseInt(newEventId, 10))) {
       return;
     }
     var newItems = [];
