@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import EventItemsList from './EventItemsList.js';
 import axios from 'axios';
+import CheckoutButton from './CheckoutButton.js';
 
 class App extends Component {
   constructor(props) {
@@ -64,6 +64,7 @@ class App extends Component {
         </div>
         <EventItemsList items={this.state.items} />
         {/* <CheckoutButton /> */}
+        <CheckoutButton />
       </div>
     );
   }
