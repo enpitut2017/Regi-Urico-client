@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css';
 import axios from 'axios';
 import CheckoutButton from './CheckoutButton.js';
+import EventItemsList from './EventItemsList.js';
 
 class App extends Component {
   constructor(props) {
@@ -19,21 +21,21 @@ class App extends Component {
   }
   
   handleEventIdChange(event) {
-    let app = this;
+    // const self = this;
     let newEventId = event.target.value;
     if (Number.isNaN(parseInt(newEventId, 10))) {
       return;
     }
-    var newItems = [];
+    let newItems = [];
     let getUrl = `http://localhost:3001/events/${newEventId}`;
     axios.get(getUrl)
-         .then(function (response) {
+         .then(response => {
            if (response.status === 200) {
              // Success
              try {
                // try parsing response JSON
                newItems = response.data.event_items;
-               app.setState({
+               this.setState({
                  event_id: newEventId,
                  items: newItems,
                });
@@ -43,29 +45,35 @@ class App extends Component {
            } else {
              // Server rejected or server error
            }})
-         .catch(function (error) {
+         .catch(error => {
            // Not reach to Server
            console.log(error);
          });
   }
   
+  handleCheckoutClick(event) {
+    const list = this.refs.EventItemsList;
+    console.dir(list);
+  }
+  
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <div className="App-input">
-          Event_id: <input type="number" value={this.state.value} onChange={this.handleEventIdChange} />
+      <MuiThemeProvider>
+        <div className="App">
+          <header className="App-header">
+            <img src={logo} className="App-logo" alt="logo" />
+            <h1 className="App-title">Welcome to React</h1>
+          </header>
+          <p className="App-intro">
+            To get started, edit <code>src/App.js</code> and save to reload.
+          </p>
+          <div className="App-input">
+            Event_id: <input type="number" value={this.state.value} onChange={this.handleEventIdChange} />
+          </div>
+          <EventItemsList items={this.state.items} />
+          <CheckoutButton onClick={this.handleCheckoutClick} />
         </div>
-        <EventItemsList items={this.state.items} />
-        {/* <CheckoutButton /> */}
-        <CheckoutButton />
-      </div>
+      </MuiThemeProvider>
     );
   }
 }
