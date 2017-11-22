@@ -1,12 +1,32 @@
 import React , {Component} from 'react';
 import EventItem from './EventItem.js';
+import Grid from 'material-ui/Grid';
 
 class EventItemsList extends Component{
   render() {
-    const items = this.props.items.map(item => {
-      return <EventItem key={item.item_id} name={item.name} count={item.count}/>;
+    const items = this.props.items.map((item, index) => {
+      return (
+        <EventItem
+          key={index}
+          item_id={item.item_id}
+          name={item.name}
+          price={item.price}
+          count={item.count}
+          diffCount={item.diff_count}
+          ref={`EventItem-${item.item_id}`}
+        />
+      );
     });
-    return <div className="EventItemList">{items}</div>
+    return (
+      <Grid container>
+        <Grid item xs={1}></Grid>
+        <Grid item xs={10} md={6}>
+          <div>
+            {items}
+          </div>
+        </Grid>
+      </Grid>
+    );
   }
 }
 
