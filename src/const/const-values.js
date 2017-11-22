@@ -1,7 +1,8 @@
 export const BACK = `戻る`;
 export const CHECKOUT = `お会計`;
 export const DEPOSIT = `お預り金`;
-export const EVENTS_URI = `http://localhost:3001/events/`;
+export const HOST = `210.140.221.144`;
+export const EVENTS_URI = `http://${HOST}:3001/events/`;
 export const MINUS = `-`;
 export const PAYMENT = `お支払`;
 export const PLUS = `+`;
