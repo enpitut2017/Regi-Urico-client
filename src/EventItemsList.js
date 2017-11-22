@@ -1,6 +1,6 @@
 import React , {Component} from 'react';
 import EventItem from './EventItem.js';
-import 'flexboxgrid';
+import Grid from 'material-ui/Grid';
 
 class EventItemsList extends Component{
   render() {
@@ -10,6 +10,7 @@ class EventItemsList extends Component{
           key={index}
           item_id={item.item_id}
           name={item.name}
+          price={item.price}
           count={item.count}
           diffCount={item.diff_count}
           ref={`EventItem-${item.item_id}`}
@@ -17,11 +18,14 @@ class EventItemsList extends Component{
       );
     });
     return (
-      <div className="row">
-        <div className="col-xs-10 col-xs-offset-1" ref="EventItemList">
-          {items}
-        </div>
-      </div>
+      <Grid container>
+        <Grid item xs={1}></Grid>
+        <Grid item xs={10} md={6}>
+          <div>
+            {items}
+          </div>
+        </Grid>
+      </Grid>
     );
   }
 }
