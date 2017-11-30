@@ -19,7 +19,7 @@ class Register extends Component {
     return {
       event_id: 0,
       items: [],
-      paymentButton: true,
+      disablePaymentButton: true,
       open: false,
       sumPrice: 0
     };
@@ -39,7 +39,7 @@ class Register extends Component {
           this.setState({
             event_id: newEventId,
             items: newItems,
-            paymentButton: !(newItems.length > 0)
+            disablePaymentButton: !(newItems.length > 0 && newItems.some(object => object.diff_count !== 0))
           });
         } else {
           // Server rejected or server error
@@ -95,14 +95,36 @@ class Register extends Component {
     this.setState({ open: true });
   }
 
+  updateDisablePaymentButton = (itemId, newDiffCount) => {
+    const eventItems = this.state.items.map(item => {
+      if (item.item_id === itemId) item.diff_count = newDiffCount
+      return item;
+    });
+    if (eventItems.every(object => object.diff_count === 0)) {
+      this.setState({
+        items: eventItems,
+        disablePaymentButton: true,
+      });
+    } else {
+      this.setState({
+        items: eventItems,
+        disablePaymentButton: false,
+      });
+    }
+  }
+
   render() {
     return (
       <div className="App">
         <div className="App-input">
           Event_id: <input type="number" value={this.state.value} onChange={this.handleEventIdChange} />
         </div>
-        <EventItemsList items={this.state.items} ref="EventItemsList" />
-        <PaymentButton onClick={this.onPaymentClick} disabled={this.state.paymentButton} />
+        <EventItemsList
+          items={this.state.items}
+          onDiffCountChange={this.updateDisablePaymentButton}
+          ref="EventItemsList"
+        />
+        <PaymentButton onClick={this.onPaymentClick} disabled={this.state.disablePaymentButton} />
         <PaymentDialog open={this.state.open} sumPrice={this.state.sumPrice} onRequestClose={this.onRequestClose} onCheckoutButton={this.onCheckoutButton}/>
       </div>
     );

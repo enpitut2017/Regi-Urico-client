@@ -13,6 +13,7 @@ class EventItemsList extends Component{
           price={item.price}
           count={item.count}
           diffCount={item.diff_count}
+          onDiffCountChange={this.props.onDiffCountChange}
           ref={`EventItem-${item.item_id}`}
         />
       );
