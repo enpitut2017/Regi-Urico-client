@@ -17,6 +17,7 @@ class EventItem extends Component{
     this.classes = props;
     this.state = {
       diffCount: props.diffCount,
+      handleDiffCountChange: props.onDiffCountChange,
     };
   }
 
@@ -36,6 +37,7 @@ class EventItem extends Component{
     this.setState({
       diffCount: newDiffCount,
     });
+    this.state.handleDiffCountChange(this.props.item_id, newDiffCount);
   }
 
   render() {
