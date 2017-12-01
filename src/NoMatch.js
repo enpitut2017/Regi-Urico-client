@@ -15,9 +15,8 @@ const styles = {
   }
 }
 
-class NoMatch extends Component {
-  render = () => (
-    
+const NoMatch = (props) => {
+  return (
     <Grid container spacing={24} justify="center" style={styles.paper}>
       <Grid item>
         <Paper>
