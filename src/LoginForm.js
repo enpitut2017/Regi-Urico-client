@@ -31,85 +31,83 @@ class LoginForm extends Component {
       password: '',
       confirmPassword: '',
     }
-    this.handleChangeName = this.handleChangeName.bind(this);
-    this.handleChangePassword = this.handleChangePassword.bind(this);
-    this.disableLogin = this.disableLogin.bind(this);
   }
-  
-  handleChangeName(event) {
-    const newName = event.target.value;
-    this.setState({
-      name: newName,
-    });
+
+  handleChange = event => {
+    const newValue = event.target.value;
+    const id = event.target.id;
+    let newState = {};
+    switch (id) {
+      case "name":
+        newState.name = newValue;
+        break;
+      case "password":
+        newState.password = newValue;
+        break;
+      default:
+        return;
+    }
+    this.setState(newState);
   }
-  
-  handleChangePassword(event) {
-    const newPassword = event.target.value;
-    this.setState({
-      password: newPassword,
-    });
-  }
-  
-  disableLogin() {
+
+  disableLogin = () => {
     return (
       this.state.name === ""
       || this.state.password === ""
     );
   }
-  
-  render() {
+
+  render = () => {
     return (
       <Grid container spacing={24} justify="center">
         <Grid item xs={10} md={6}>
           <Paper style={styles.paper}>
-            <form>
-              <Grid container spacing={24} justify="center">
-                <Grid item xs={8} sm={4} md={4}>
-                  <TextField
-                    id="name"
-                    name="name"
-                    label={ACCOUNT_NAME}
-                    className="TextField"
-                    margin="normal"
-                    fullWidth
-                    value={this.state.name}
-                    onChange={this.handleChangeName}
-                  />
-                </Grid>
+            <Grid container spacing={24} justify="center">
+              <Grid item xs={8} sm={4} md={4}>
+                <TextField
+                  id="name"
+                  name="name"
+                  label={ACCOUNT_NAME}
+                  className="TextField"
+                  margin="normal"
+                  fullWidth
+                  value={this.state.name}
+                  onChange={this.handleChange}
+                />
               </Grid>
-              <Grid container spacing={24} justify="center">
-                <Grid item xs={8} sm={4} md={4}>
-                  <TextField
-                    id="password"
-                    name="password"
-                    label={PASSWORD}
-                    className="TextField"
-                    type="password"
-                    margin="normal"
-                    fullWidth
-                    value={this.state.password}
-                    onChange={this.handleChangePassword}
-                  />
-                </Grid>
+            </Grid>
+            <Grid container spacing={24} justify="center">
+              <Grid item xs={8} sm={4} md={4}>
+                <TextField
+                  id="password"
+                  name="password"
+                  label={PASSWORD}
+                  className="TextField"
+                  type="password"
+                  margin="normal"
+                  fullWidth
+                  value={this.state.password}
+                  onChange={this.handleChange}
+                />
               </Grid>
-              <Grid container spacing={24} justify="center">
-                <Grid item>
-                  <Button raised color="primary" disabled={this.disableLogin()}>
-                     {LOGIN}
-                  </Button>
-                </Grid>
+            </Grid>
+            <Grid container spacing={24} justify="center">
+              <Grid item>
+                <Button raised color="primary" disabled={this.disableLogin()}>
+                   {LOGIN}
+                </Button>
               </Grid>
-              <Grid container spacing={24} justify="center" alignItems="baseline">
-                <Grid item xs={8} sm={4} md={4}>
-                  <Typography type="caption">{NOT_HAVE_ACCOUNT}</Typography>
-                </Grid>
-                <Grid item xs={8} sm={5} md={5}>
-                  <Button color="primary">
-                    {CREATE_ACCOUNT}
-                  </Button>
-                </Grid>
+            </Grid>
+            <Grid container spacing={24} justify="center" alignItems="baseline">
+              <Grid item xs={8} sm={4} md={4}>
+                <Typography type="caption">{NOT_HAVE_ACCOUNT}</Typography>
               </Grid>
-            </form>
+              <Grid item xs={8} sm={5} md={5}>
+                <Button color="primary">
+                  {CREATE_ACCOUNT}
+                </Button>
+              </Grid>
+            </Grid>
           </Paper>
         </Grid>
       </Grid>
