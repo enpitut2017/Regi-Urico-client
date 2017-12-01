@@ -1,6 +1,10 @@
+export const ACCOUNT_NAME = `アカウント名`;
 export const BACK = `戻る`;
 export const CHECKOUT = `お会計`;
+export const CREATE_ACCOUNT = `アカウントを作成`;
 export const DEPOSIT = `お預り金`;
+export const EVENTS_URI = `/events/`;
+export const LOGIN = `ログイン`;
 export const MINUS = `-`;
 export const PAGE_NOT_FOUND = `お探しのページは見つかりませんでした。`;
 export const PAYMENT = `お支払`;
