@@ -1,5 +1,5 @@
 import { Grid, Paper, Typography } from 'material-ui';
-import React, {Component} from 'react';
+import React from 'react';
 import {PAGE_NOT_FOUND} from './const/const-values';
 
 const styles = {
