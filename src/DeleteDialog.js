@@ -2,7 +2,7 @@ import React from 'react';
 import Dialog, { DialogTitle, DialogContent, DialogContentText, DialogActions } from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
-import { ITEM_NAME, ITEM_PRICE, ITEM_COUNT, CANCEL, DELETE } from './const/const-values';
+import { ITEM_NAME, ITEM_PRICE, ITEM_COUNT, CANCEL, DELETE, ALERT_DELETE_ITEM } from './const/const-values';
 
 const styles = {
   center: {
@@ -28,7 +28,7 @@ const DeleteDialog = (props) => {
       <DialogTitle style={styles.center}></DialogTitle>
       <DialogContent>
         <DialogContentText style={styles.marginBottom30}>
-          以下の商品を削除します.
+          {ALERT_DELETE_ITEM}
         </DialogContentText>
           <TextField label={ITEM_NAME} defaultValue={props.item.name} style={styles.marginBottom30} disabled/>
           <TextField label={ITEM_PRICE} defaultValue={String(props.item.price)} style={styles.marginBottom30} disabled/>

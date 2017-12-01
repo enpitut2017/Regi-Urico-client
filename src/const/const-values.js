@@ -1,6 +1,7 @@
 export const ACCOUNT_NAME = `アカウント名`;
 export const ALREADY_HAVE_ACCOUNT = `アカウントをお持ちですか？`;
 export const ADD_ITEM = `商品追加`;
+export const ALERT_DELETE_ITEM = `以下の商品を削除します`;
 export const BACK = `戻る`;
 export const CANCEL = `キャンセル`;
 export const CHECKOUT = `お会計`;
