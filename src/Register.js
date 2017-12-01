@@ -3,7 +3,7 @@ import axios from 'axios';
 import PaymentButton from './PaymentButton.js';
 import EventItemsList from './EventItemsList.js';
 import PaymentDialog from './PaymentDialog';
-import { BASE_URI, EVENTS_URI } from './const/const-values';
+import { BASE_URI, EVENTS_URI } from './const/urls';
 
 class Register extends Component {
   constructor(props) {
