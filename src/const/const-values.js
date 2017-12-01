@@ -1,7 +1,6 @@
 export const BACK = `戻る`;
 export const CHECKOUT = `お会計`;
 export const DEPOSIT = `お預り金`;
-export const EVENTS_URI = `/events/`;
 export const MINUS = `-`;
 export const PAYMENT = `お支払`;
 export const PLUS = `+`;
