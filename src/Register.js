@@ -3,7 +3,7 @@ import axios from 'axios';
 import PaymentButton from './PaymentButton.js';
 import EventItemsList from './EventItemsList.js';
 import PaymentDialog from './PaymentDialog';
-import { EVENTS_URI } from './const/const-values';
+import { BASE_URI, EVENTS_URI } from './const/urls';
 
 class Register extends Component {
   constructor(props) {
@@ -27,7 +27,7 @@ class Register extends Component {
 
   handleEventIdChange = event => {
     const newEventId = event.target.value;
-    const getUrl = `${EVENTS_URI}${newEventId}`;
+    const getUrl = `${BASE_URI}${EVENTS_URI}${newEventId}`;
 
     if (Number.isNaN(parseInt(newEventId, 10))) return;
 
