@@ -1,9 +1,12 @@
-import React, {Component} from 'react';
-import TextField from 'material-ui/TextField';
+import { Redirect } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
+import React, {Component} from 'react';
+import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
+import axios from 'axios';
+
 import {
   ACCOUNT_NAME,
   CREATE_ACCOUNT,
@@ -11,6 +14,7 @@ import {
   NOT_HAVE_ACCOUNT,
   PASSWORD
 } from './const/const-values';
+import { BASE_URI, SIGNIN_URI } from './const/urls';
 
 const styles = {
   paper: {
@@ -30,6 +34,8 @@ class LoginForm extends Component {
       name: '',
       password: '',
       confirmPassword: '',
+      redirectToSignUp: false,
+      redirectToDashboard: false,
     }
   }
 
@@ -48,16 +54,45 @@ class LoginForm extends Component {
         return;
     }
     this.setState(newState);
-  }
+  };
+
+  handleClickSignup = () => {
+    this.setState({ redirectToSignUp: true });
+  };
+
+  handleClickSignin = () => {
+    const postUrl = `${BASE_URI}${SIGNIN_URI}`;
+    axios
+      .post(postUrl, {
+        name: this.state.name,
+        password: this.state.password
+      })
+      .then(response => {
+        if (response.errors == null) {
+          localStorage.setItem('authorizedToken', response.data.token);
+          this.setState({redirectToDashboard: true});
+        } else {
+          // Server rejected or server error
+        }})
+      .catch(error => {
+        // Not reach to Server
+        console.error(error);
+      });
+  };
 
   disableLogin = () => {
     return (
       this.state.name === ""
       || this.state.password === ""
     );
-  }
+  };
 
   render = () => {
+    if (this.state.redirectToDashboard) {
+      return (<Redirect to={"/"} />);
+    } else if (this.state.redirectToSignUp) {
+      return (<Redirect to={"/signup"} />);
+    }
     return (
       <Grid container spacing={24} justify="center">
         <Grid item xs={10} md={6}>
@@ -93,7 +128,7 @@ class LoginForm extends Component {
             </Grid>
             <Grid container spacing={24} justify="center">
               <Grid item>
-                <Button raised color="primary" disabled={this.disableLogin()}>
+                <Button raised color="primary" disabled={this.disableLogin()} onClick={this.handleClickSignin}>
                    {LOGIN}
                 </Button>
               </Grid>
@@ -103,7 +138,7 @@ class LoginForm extends Component {
                 <Typography type="caption">{NOT_HAVE_ACCOUNT}</Typography>
               </Grid>
               <Grid item xs={8} sm={5} md={5}>
-                <Button color="primary">
+                <Button color="primary" onClick={this.handleClickSignup}>
                   {CREATE_ACCOUNT}
                 </Button>
               </Grid>
