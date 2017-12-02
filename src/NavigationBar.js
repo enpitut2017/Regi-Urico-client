@@ -10,7 +10,7 @@ const styles = {
   }
 }
 
-const NavigationAppBar = props => {
+const NavigationBar = props => {
   if (props.authorized) {
     return (
       <header>
@@ -36,4 +36,4 @@ const NavigationAppBar = props => {
   }
 };
 
-export default NavigationAppBar;
+export default NavigationBar;
