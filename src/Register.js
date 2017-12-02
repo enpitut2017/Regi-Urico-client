@@ -4,6 +4,7 @@ import PaymentButton from './PaymentButton.js';
 import EventItemsList from './EventItemsList.js';
 import PaymentDialog from './PaymentDialog';
 import { BASE_URI, EVENTS_URI } from './const/urls';
+import {withNavigationBar} from './wrapper/withNavigationBar';
 
 class Register extends Component {
   constructor(props) {
@@ -131,4 +132,4 @@ class Register extends Component {
   }
 }
 
-export default Register;
+export default withNavigationBar(Register);
