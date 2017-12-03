@@ -66,18 +66,18 @@ export const withNavigationBar = InnerComponent => {
         })
         .then(response => {
           const newEvents = response.data.event;
-          if (newEvents.length <= 0) {
+          if (newEvents === undefined || newEvents.length <= 0) {
             this.setState({redirectToCreateEvent: true});
           } else {
             const lastUpdateEventId = newEvents[0].id;
             let newEventId = parseInt(localStorage.event_id, 10);
-            if (newEventId == null || newEvents.every(event => event.id !== newEventId)) {
+            if (Number.isNaN(newEventId) || newEvents.every(event => event.id !== newEventId)) {
               newEventId = lastUpdateEventId;
             }
-            const newEvent = newEvents.filter(event =>
+            const newEvent = newEvents.find(event =>
               event.id === newEventId
-            )[0];
-            const newTitle = (newEvent != null) ? newEvent.name : '';
+            );
+            const newTitle = newEvent.name;
             this.setState({
               events: newEvents,
               event_id: newEventId,
@@ -105,9 +105,9 @@ export const withNavigationBar = InnerComponent => {
     }
 
     handleClickEventItem = event_id => {
-      const newTitle = this.state.events.filter(event =>
+      const newTitle = this.state.events.find(event =>
         event.id === event_id
-      )[0].name;
+      ).name;
       this.setState({event_id: event_id, title: newTitle});
       localStorage.event_id = event_id;
     }
