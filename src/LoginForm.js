@@ -12,7 +12,8 @@ import {
   CREATE_ACCOUNT,
   LOGIN,
   NOT_HAVE_ACCOUNT,
-  PASSWORD
+  PASSWORD,
+  SERVICE_NAME,
 } from './const/const-values';
 import { BASE_URI, SIGNIN_URI } from './const/urls';
 
@@ -24,6 +25,9 @@ const styles = {
   },
   plainText: {
     fontSize: '0.6em',
+  },
+  serviceName: {
+    marginTop: 64,
   }
 };
 
@@ -95,6 +99,11 @@ class LoginForm extends Component {
     }
     return (
       <Grid container spacing={24} justify="center">
+        <Grid item xs={12} md={12} style={styles.serviceName}>
+          <Typography type="display1" gutterBottom align="center" color="secondary">
+            {SERVICE_NAME}
+          </Typography>
+        </Grid>
         <Grid item xs={10} md={6}>
           <Paper style={styles.paper}>
             <Grid container spacing={24} justify="center">
