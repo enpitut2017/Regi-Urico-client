@@ -1,6 +1,8 @@
 import { Redirect } from 'react-router-dom';
 import React, {Component} from 'react';
+import axios from 'axios';
 
+import { BASE_URI, EVENTS_URI } from '../const/urls';
 import {
   CLOSE_EVENTS_LIST,
   CONFIRM_LOGOUT,
@@ -8,8 +10,8 @@ import {
   LOGOUT,
   OPEN_EVENTS_LIST,
 } from '../const/const-values';
-import NavigationBar from '../NavigationBar';
 import EventsListDrawer from '../EventsListDrawer';
+import NavigationBar from '../NavigationBar';
 import SimpleDialog from '../SimpleDialog';
 
 const styles = {
@@ -39,11 +41,54 @@ export const withNavigationBar = InnerComponent => {
       return {
         event_id: 0,
         title: "",
-        events: [{id: 1, name: "すごい同人誌"}, {id: 2, name: "コミフェ 12夏"}],
+        events: [],
         openDrawer: false,
         openDialog: false,
-        redirectToSignin: false
+        redirectToSignin: false,
+        redirectToCreateEvent: false,
       };
+    }
+
+    componentWillMount = () => {
+      this.getEvents();
+    }
+
+    getEvents = () => {
+      const token = localStorage.authorizedToken;
+      if (token == null) {
+        this.setState({redirectToSignin: true});
+        return;
+      }
+      const getUrl = `${BASE_URI}${EVENTS_URI}`;
+      axios
+        .get(getUrl, {
+          headers: {'X-Authorized-Token': token},
+        })
+        .then(response => {
+          const newEvents = response.data.event;
+          if (newEvents.length <= 0) {
+            this.setState({redirectToCreateEvent: true});
+          } else {
+            const lastUpdateEventId = newEvents[0].id;
+            let newEventId = parseInt(localStorage.event_id, 10);
+            if (newEventId == null || newEvents.every(event => event.id !== newEventId)) {
+              newEventId = lastUpdateEventId;
+            }
+            const newEvent = newEvents.filter(event =>
+              event.id === newEventId
+            )[0];
+            const newTitle = (newEvent != null) ? newEvent.name : '';
+            this.setState({
+              events: newEvents,
+              event_id: newEventId,
+              title: newTitle
+            });
+            localStorage.event_id = newEventId;
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     }
 
     handleSignOut = () => {
@@ -60,7 +105,11 @@ export const withNavigationBar = InnerComponent => {
     }
 
     handleClickEventItem = event_id => {
-      this.setState({event_id: event_id});
+      const newTitle = this.state.events.filter(event =>
+        event.id === event_id
+      )[0].name;
+      this.setState({event_id: event_id, title: newTitle});
+      localStorage.event_id = event_id;
     }
 
     handleRequestCloseDialog = () => {
@@ -81,6 +130,8 @@ export const withNavigationBar = InnerComponent => {
       };
       if (this.state.redirectToSignin) {
         return <Redirect to="/signin" />;
+      } else if (this.state.redirectToCreateEvent) {
+        return <Redirect to="/create_event" />;
       } else {
         return (
           <div>

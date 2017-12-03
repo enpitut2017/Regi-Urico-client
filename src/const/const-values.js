@@ -7,7 +7,6 @@ export const CONFIRM_PASSWORD = `パスワード（確認）`;
 export const CREATE_ACCOUNT = `アカウントを作成`;
 export const DEPOSIT = `お預り金`;
 export const EVENTS_LIST = `イベントリスト`;
-export const EVENTS_URI = `/events/`;
 export const LOGIN = `サインイン`;
 export const LOGOUT = `サインアウト`;
 export const MINUS = `-`;
