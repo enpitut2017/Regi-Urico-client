@@ -16,6 +16,7 @@ export const PAGE_NOT_FOUND = `お探しのページは見つかりませんで�
 export const PASSWORD = `パスワード`;
 export const PAYMENT = `お支払`;
 export const PLUS = `+`;
+export const SERVICE_NAME = `Regi-Urico`;
 export const SUBTOTAL = `小計`;
 export const THE_CHANGE = `お釣り`;
 export const YEN = `円`;
