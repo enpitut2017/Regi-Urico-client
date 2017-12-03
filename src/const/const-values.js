@@ -6,6 +6,7 @@ export const CANCEL = `キャンセル`;
 export const CONFIRM_PASSWORD = `パスワード（確認）`;
 export const CREATE_ACCOUNT = `アカウントを作成`;
 export const DEPOSIT = `お預り金`;
+export const EVENTS_LIST = `イベントリスト`;
 export const EVENTS_URI = `/events/`;
 export const LOGIN = `サインイン`;
 export const LOGOUT = `サインアウト`;
@@ -21,5 +22,7 @@ export const THE_CHANGE = `お釣り`;
 export const YEN = `円`;
 export const YEN_MARK = `¥`;
 
+export const CLOSE_EVENTS_LIST = `${EVENTS_LIST}を閉じる`;
 export const CONFIRM_LOGOUT = `${LOGOUT}（確認）`;
 export const CONFIRM_LOGOUT_TEXT = `本当に${LOGOUT}しますか？`;
+export const OPEN_EVENTS_LIST = `${EVENTS_LIST}を開く`;

@@ -2,11 +2,14 @@ import { Redirect } from 'react-router-dom';
 import React, {Component} from 'react';
 
 import {
+  CLOSE_EVENTS_LIST,
   CONFIRM_LOGOUT,
   CONFIRM_LOGOUT_TEXT,
   LOGOUT,
+  OPEN_EVENTS_LIST,
 } from '../const/const-values';
 import NavigationBar from '../NavigationBar';
+import EventsListDrawer from '../EventsListDrawer';
 import SimpleDialog from '../SimpleDialog';
 
 const styles = {
@@ -36,7 +39,7 @@ export const withNavigationBar = InnerComponent => {
       return {
         event_id: 0,
         title: "",
-        events: [],
+        events: [{id: 1, name: "すごい同人誌"}, {id: 2, name: "コミフェ 12夏"}],
         openDrawer: false,
         openDialog: false,
         redirectToSignin: false
@@ -49,6 +52,15 @@ export const withNavigationBar = InnerComponent => {
 
     handleOpenDrawer = () => {
       // TODO: Drawer描画コンポーネントの作成
+      this.setState({openDrawer: true});
+    }
+
+    handleRequestCloseDrawer = () => {
+      this.setState({openDrawer: false});
+    }
+
+    handleClickEventItem = event_id => {
+      this.setState({event_id: event_id});
     }
 
     handleRequestCloseDialog = () => {
@@ -75,6 +87,9 @@ export const withNavigationBar = InnerComponent => {
             <header>
               <NavigationBar
                 title={this.state.title}
+                tooltipTitle={
+                  this.state.openDrawer ? CLOSE_EVENTS_LIST : OPEN_EVENTS_LIST
+                }
                 handleSignOut={this.handleSignOut}
                 handleOpenDrawer={this.handleOpenDrawer}
                 authorized={true}
@@ -83,6 +98,12 @@ export const withNavigationBar = InnerComponent => {
             <div style={styles.content}>
               <InnerComponent {...this.props} {...provideProps}/>
             </div>
+            <EventsListDrawer
+              events={this.state.events}
+              open={this.state.openDrawer}
+              onClick={this.handleClickEventItem}
+              onRequestClose={this.handleRequestCloseDrawer}
+            />
             <SimpleDialog
               ok={LOGOUT}
               title={CONFIRM_LOGOUT}
