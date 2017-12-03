@@ -19,16 +19,20 @@ import {
 import {BASE_URI, SIGNUP_URI} from './const/urls';
 
 const styles = {
+  gridPaper: {
+    paddingTop: 0,
+  },
   paper: {
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: 16,
+    marginTop: 8,
   },
   plainText: {
     fontSize: '0.6em',
   },
   serviceName: {
     marginTop: 64,
+    paddingBottom: 0,
   }
 };
 
@@ -112,7 +116,7 @@ class CreateAccountForm extends Component {
             {SERVICE_NAME}
           </Typography>
         </Grid>
-        <Grid item xs={10} md={6}>
+        <Grid item xs={10} md={6} style={styles.gridPaper}>
           <Paper style={styles.paper}>
             <form>
               <Grid container spacing={24} justify="center">

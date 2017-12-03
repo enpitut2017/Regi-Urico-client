@@ -1,3 +1,4 @@
+import { Avatar } from 'material-ui';
 import { Redirect } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
@@ -18,16 +19,24 @@ import {
 import { BASE_URI, SIGNIN_URI } from './const/urls';
 
 const styles = {
+  gridPaper: {
+    paddingTop: 0,
+  },
   paper: {
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: 16,
+    marginTop: 8,
   },
   plainText: {
     fontSize: '0.6em',
   },
   serviceName: {
     marginTop: 64,
+    paddingBottom: 0,
+  },
+  logo: {
+    width: 100,
+    height: 'auto',
   }
 };
 
@@ -99,12 +108,12 @@ class LoginForm extends Component {
     }
     return (
       <Grid container spacing={24} justify="center">
-        <Grid item xs={12} md={12} style={styles.serviceName}>
+        <Grid item xs={8} style={styles.serviceName}>
           <Typography type="display1" gutterBottom align="center" color="secondary">
             {SERVICE_NAME}
           </Typography>
         </Grid>
-        <Grid item xs={10} md={6}>
+        <Grid item xs={10} md={6} style={styles.gridPaper}>
           <Paper style={styles.paper}>
             <Grid container spacing={24} justify="center">
               <Grid item xs={8} sm={4} md={4}>
