@@ -18,20 +18,7 @@ class DashboardItems extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: [
-        {
-          item_id: 1,
-          name: '試験用商品1',
-          price: 2980,
-          count: 100,
-        },
-        {
-          item_id: 2,
-          name: '試験用商品2',
-          price: 800,
-          count: 50
-        }
-      ],
+      items: [],
       editItem: {
         id: '',
         name: '',
@@ -48,7 +35,7 @@ class DashboardItems extends Component {
   }
 
   init = () => {
-    const getUrl = `${EVENTS_URI}1`;
+    const getUrl = `${EVENTS_URI}${this.state.eventId}`;
 
     axios
       .get(getUrl)
@@ -56,7 +43,6 @@ class DashboardItems extends Component {
         if (response.status === 200) {
           const newItems = response.data.event_items;
           this.setState({
-            event_id: 1,
             items: newItems,
           });
         } else {
@@ -96,7 +82,7 @@ class DashboardItems extends Component {
     });
   }
 
-  onClickDeleteButton = itemId => () => {
+  deleteItem = itemId => () => {
     const item = this.state.items[itemId - 1];
     this.setState({
       deleteItem: item,
@@ -118,7 +104,7 @@ class DashboardItems extends Component {
 
   execDelete = item => async () => {
     const deleteData = {
-      event_id: this.event_id,
+      event_id: this.state.eventId,
       item_id: item.id
     };
     const response = await axios.delete(deleteData).catch(e => e);
@@ -133,7 +119,7 @@ class DashboardItems extends Component {
         <Grid container>
           <Grid item xs={1}></Grid>
           <Grid item xs={10}>
-            <EditableEventItemsList items={this.state.items} handleDeleteClick={this.onClickDeleteButton} handleEditClick={this.editItem} ref="EventItemsList" />
+            <EditableEventItemsList items={this.state.items} handleDeleteClick={this.deleteItem} handleEditClick={this.editItem} ref="EventItemsList" />
           </Grid>
         </Grid>
         <Grid container>
