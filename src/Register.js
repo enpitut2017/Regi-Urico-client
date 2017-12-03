@@ -3,6 +3,7 @@ import axios from 'axios';
 import PaymentButton from './PaymentButton.js';
 import EventItemsList from './EventItemsList.js';
 import PaymentDialog from './PaymentDialog';
+import {withAuthorization} from './wrapper/withAuthorization';
 import { BASE_URI, EVENTS_URI } from './const/urls';
 
 class Register extends Component {
@@ -131,4 +132,4 @@ class Register extends Component {
   }
 }
 
-export default Register;
+export default withAuthorization(Register);
