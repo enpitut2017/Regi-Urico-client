@@ -7,6 +7,7 @@ import AddIcon from 'material-ui-icons/Add'
 import Grid from 'material-ui/Grid';
 import ItemDialog from './ItemDialog';
 import DeleteDialog from './DeleteDialog';
+import { withNavigationBar } from './wrapper/withNavigationBar';
 
 const styles = {
   marginTop15: {
@@ -167,4 +168,4 @@ class ItemsDashboard extends Component {
   }
 }
 
-export default ItemsDashboard;
+export default withNavigationBar(ItemsDashboard);
