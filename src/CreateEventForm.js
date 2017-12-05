@@ -30,14 +30,16 @@ export default class CreateEventForm extends Component {
     super(props);
     this.state = {
       eventName: '',
-      redirect: false
+      redirect: false,
+      disable: true
     };
   }
 
   handleChange = e => {
     const eventName = e.target.value;
     this.setState({
-      eventName
+      eventName,
+      disable: eventName.length <= 0
     });
   }
 
@@ -82,6 +84,7 @@ export default class CreateEventForm extends Component {
                   raised
                   color='primary'
                   onClick={this.handleClick}
+                  disabled={this.state.disable}
                 >
                   {CREATE_EVENT}
                 </Button>
