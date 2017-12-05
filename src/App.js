@@ -20,6 +20,7 @@ class App extends Component {
           <Route path="/signup" component={CreateAccountForm} />
           <Route path="/signin" component={LoginForm} />
           <Route path="/create_event" component={CreateEventForm} />
+          <Route path="/register" component={Register} />
           <Route path="/items_dashboard" component={ItemsDashboard} />
           <Route path="/event_dashboard" component={NoMatch} />
           <Route component={NoMatch} />
