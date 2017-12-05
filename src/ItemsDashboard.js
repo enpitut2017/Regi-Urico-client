@@ -35,7 +35,7 @@ class ItemsDashboard extends Component {
   }
 
   init = () => {
-    const getUrl = `${BASE_URI}${EVENTS_URI}${this.props.event_id}`;
+    const getUrl = `${BASE_URI}${EVENTS_URI}${localStorage.event_id}`;
 
     axios
       .get(getUrl)
