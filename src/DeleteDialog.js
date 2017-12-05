@@ -30,9 +30,9 @@ const DeleteDialog = (props) => {
         <DialogContentText style={styles.marginBottom30}>
           {ALERT_DELETE_ITEM}
         </DialogContentText>
-          <TextField label={ITEM_NAME} defaultValue={props.item.name} style={styles.marginBottom30} disabled/>
-          <TextField label={ITEM_PRICE} defaultValue={String(props.item.price)} style={styles.marginBottom30} disabled/>
-          <TextField label={ITEM_COUNT} defaultValue={String(props.item.count)} style={styles.marginBottom30} disabled/>
+          <TextField fullWidth label={ITEM_NAME} defaultValue={props.item.name} style={styles.marginBottom30} disabled/>
+          <TextField fullWidth label={ITEM_PRICE} defaultValue={String(props.item.price)} style={styles.marginBottom30} disabled/>
+          <TextField fullWidth label={ITEM_COUNT} defaultValue={String(props.item.count)} style={styles.marginBottom30} disabled/>
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onRequestClose}>{CANCEL}</Button>
