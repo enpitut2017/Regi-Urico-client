@@ -5,6 +5,7 @@ import EventItemsList from './EventItemsList.js';
 import PaymentDialog from './PaymentDialog';
 import {withAuthorization} from './wrapper/withAuthorization';
 import { BASE_URI, EVENTS_URI } from './const/urls';
+import {withNavigationBar} from './wrapper/withNavigationBar';
 
 class Register extends Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class Register extends Component {
 
   getInitialState = () => {
     return {
-      event_id: 0,
+      event_id: this.props.event_id,
       items: [],
       disablePaymentButton: true,
       open: false,
@@ -26,11 +27,14 @@ class Register extends Component {
     };
   }
 
-  handleEventIdChange = event => {
-    const newEventId = event.target.value;
-    const getUrl = `${BASE_URI}${EVENTS_URI}${newEventId}`;
+  componentWillReceiveProps = nextProps => {
+    this.handleEventIdChange(nextProps.event_id);
+  }
 
-    if (Number.isNaN(parseInt(newEventId, 10))) return;
+  handleEventIdChange = event_id => {
+    const getUrl = `${BASE_URI}${EVENTS_URI}${event_id}`;
+
+    if (Number.isNaN(parseInt(event_id, 10))) return;
 
     axios
       .get(getUrl)
@@ -38,7 +42,7 @@ class Register extends Component {
         if (response.status === 200) {
           const newItems = response.data.event_items;
           this.setState({
-            event_id: newEventId,
+            event_id: event_id,
             items: newItems,
             disablePaymentButton: !(newItems.length > 0 && newItems.some(object => object.diff_count !== 0))
           });
@@ -117,9 +121,6 @@ class Register extends Component {
   render() {
     return (
       <div className="App">
-        <div className="App-input">
-          Event_id: <input type="number" value={this.state.value} onChange={this.handleEventIdChange} />
-        </div>
         <EventItemsList
           items={this.state.items}
           onDiffCountChange={this.updateDisablePaymentButton}
@@ -132,4 +133,4 @@ class Register extends Component {
   }
 }
 
-export default withAuthorization(Register);
+export default withAuthorization(withNavigationBar(Register));
