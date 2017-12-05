@@ -4,17 +4,13 @@ import PaymentButton from './PaymentButton.js';
 import EventItemsList from './EventItemsList.js';
 import PaymentDialog from './PaymentDialog';
 import {withAuthorization} from './wrapper/withAuthorization';
-import { BASE_URI, EVENTS_URI } from './const/urls';
+import { BASE_URI, EVENTS_URI, REGISTER_URI } from './const/urls';
 import {withNavigationBar} from './wrapper/withNavigationBar';
 
 class Register extends Component {
   constructor(props) {
     super(props);
     this.state = this.getInitialState();
-  }
-
-  init = () => {
-    //TODO: 初期化処理
   }
 
   getInitialState = () => {
@@ -61,15 +57,13 @@ class Register extends Component {
 
     if (Object.keys(eventItems).length === 0) return;
 
-    const items = Object.keys(eventItems).map(value => {
+    this.postItems = Object.keys(eventItems).map(value => {
       const eventItem = eventItems[value];
       const id        = eventItem.props.item_id;
-      const name      = eventItem.props.name;
       const diffCount = eventItem.state.diffCount;
       return {
         id,
-        name,
-        diffCount
+        count: -diffCount
       };
     });
 
@@ -92,8 +86,18 @@ class Register extends Component {
     this.setState({ open: false });
   }
 
-  onCheckoutButton = () => {
-    //TODO: CheckoutButtonの処理
+  onCheckoutButton = async () => {
+    const url = `${BASE_URI}${REGISTER_URI}`;
+    const data = {
+      event_id: this.state.event_id,
+      items: this.postItems
+    };
+    const response = await axios.post(url, data).catch(error => console.error(error));
+    this.setState({
+      items: response.data.event_items,
+      open: false,
+      disablePaymentButton: true
+    });
   }
 
   dialogOpen = () => {
