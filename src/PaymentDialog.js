@@ -20,11 +20,22 @@ const styles = {
 class PaymentDialog extends Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = this.getInitialeState();
+  }
+
+  getInitialeState = () => {
+    return {
       deposit: '',
       theChange: 0,
       disabled: true
     };
+  }
+
+  componentWillReceiveProps = () => {
+    const newState = this.getInitialeState();
+    this.setState(
+      newState
+    );
   }
 
   handleChangeDeposit = event => {
