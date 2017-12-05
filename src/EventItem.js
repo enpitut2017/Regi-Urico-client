@@ -21,6 +21,12 @@ class EventItem extends Component{
     };
   }
 
+  componentWillReceiveProps = nextProps => {
+    this.setState({
+      diffCount: nextProps.diffCount
+    });
+  }
+
   onClick(event, type) {
     let newDiffCount = this.state.diffCount;
     switch(type) {
