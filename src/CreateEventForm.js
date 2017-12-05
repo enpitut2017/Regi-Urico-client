@@ -95,4 +95,9 @@ export default class CreateEventForm extends Component {
       </Grid>
     );
   }
+
+  render() {
+    if (this.state.redirect) return <Redirect to='/' />
+    return this.renderCreateEventForm();
+  }
 }
