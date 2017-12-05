@@ -1,26 +1,38 @@
-import React, {Component} from 'react';
-import TextField from 'material-ui/TextField';
+import { Redirect } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
+import React, {Component} from 'react';
+import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
+import axios from 'axios';
+
 import {
   ACCOUNT_NAME,
   ALREADY_HAVE_ACCOUNT,
   CONFIRM_PASSWORD,
   CREATE_ACCOUNT,
   LOGIN,
-  PASSWORD
+  PASSWORD,
+  SERVICE_NAME
 } from './const/const-values';
+import {BASE_URI, SIGNUP_URI} from './const/urls';
 
 const styles = {
+  gridPaper: {
+    paddingTop: 0,
+  },
   paper: {
     paddingTop: 16,
     paddingBottom: 16,
-    marginTop: 16,
+    marginTop: 8,
   },
   plainText: {
     fontSize: '0.6em',
+  },
+  serviceName: {
+    marginTop: 64,
+    paddingBottom: 0,
   }
 };
 
@@ -31,6 +43,8 @@ class CreateAccountForm extends Component {
       name: '',
       password: '',
       confirmPassword: '',
+      redirectToSignIn: false,
+      redirectToDashboard: false,
     }
   }
 
@@ -54,6 +68,33 @@ class CreateAccountForm extends Component {
     this.setState(newState);
   }
 
+  handleClickSignup = () => {
+    const postUrl = `${BASE_URI}${SIGNUP_URI}`;
+    axios
+      .post(postUrl, {
+        name: this.state.name,
+        password: this.state.password,
+        password_confirmation: this.state.confirmPassword
+      })
+      .then(response => {
+        if (response.errors == null) {
+          localStorage.setItem('authorizedToken', response.data.token);
+          this.setState({ redirectToDashboard: true });
+        } else {
+          // Server rejected or server error
+        }})
+      .catch(error => {
+        // Not reach to Server
+        console.error(error);
+      });
+  };
+
+  handleClickSignin = () => {
+    this.setState({
+      redirectToSignIn: true,
+    });
+  }
+
   disableCreateAccount = () => {
     return (
       this.state.name === ""
@@ -63,9 +104,19 @@ class CreateAccountForm extends Component {
   }
 
   render = () => {
+    if (this.state.redirectToDashboard) {
+      return (<Redirect to={"/"} />);
+    } else if (this.state.redirectToSignIn) {
+      return (<Redirect to={"/"} />);
+    }
     return (
       <Grid container spacing={24} justify="center">
-        <Grid item xs={10} md={6}>
+        <Grid item xs={12} md={12} style={styles.serviceName}>
+          <Typography type="display1" gutterBottom align="center" color="secondary">
+            {SERVICE_NAME}
+          </Typography>
+        </Grid>
+        <Grid item xs={10} md={6} style={styles.gridPaper}>
           <Paper style={styles.paper}>
             <form>
               <Grid container spacing={24} justify="center">
@@ -114,7 +165,12 @@ class CreateAccountForm extends Component {
               </Grid>
               <Grid container spacing={24} justify="center">
                 <Grid item xs={8} sm={4} md={4}>
-                  <Button raised color="primary" disabled={this.disableCreateAccount()}>
+                  <Button
+                    id="signup"
+                    raised
+                    color="primary"
+                    disabled={this.disableCreateAccount()}
+                    onClick={this.handleClickSignup}>
                      {CREATE_ACCOUNT}
                   </Button>
                 </Grid>
@@ -124,7 +180,7 @@ class CreateAccountForm extends Component {
                   <Typography type="caption">{ALREADY_HAVE_ACCOUNT}</Typography>
                 </Grid>
                 <Grid item xs={8} sm={3} md={3}>
-                  <Button color="primary">
+                  <Button id="signin" color="primary" onClick={this.handleClickSignin}>
                     {LOGIN}
                   </Button>
                 </Grid>
@@ -133,7 +189,7 @@ class CreateAccountForm extends Component {
           </Paper>
         </Grid>
       </Grid>
-    );
+    )
   }
 }
 
