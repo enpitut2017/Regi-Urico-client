@@ -68,7 +68,9 @@ class ItemsDashboard extends Component {
   }
 
   editItem = itemId => () => {
-    const item = this.state.items[itemId - 1];
+    const item = this.state.items.find(item => {
+      return item.item_id === itemId;
+    })
     this.setState({
       editItem: Object.assign({}, this.state.editItem, item),
       itemDialog: true
@@ -88,7 +90,9 @@ class ItemsDashboard extends Component {
   }
 
   deleteItem = itemId => () => {
-    const item = this.state.items[itemId - 1];
+    const item = this.state.items.find(item => {
+      return item.item_id === itemId;
+    });
     this.setState({
       deleteItem: Object.assign({}, this.state.deleteItem, item),
       deleteDialog: true
