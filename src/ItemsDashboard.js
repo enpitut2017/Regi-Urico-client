@@ -31,11 +31,16 @@ class ItemsDashboard extends Component {
         count: ''
       }
     };
-    this.init();
+    this.init(this.props.event_id);
   }
 
-  init = () => {
-    const getUrl = `${BASE_URI}${EVENTS_URI}${this.props.event_id}`;
+  componentWillReceiveProps = nextProps => {
+    this.init(nextProps.event_id);
+  }
+
+  init = eventId => {
+    if (eventId === 0) return;
+    const getUrl = `${BASE_URI}${EVENTS_URI}${eventId}`;
 
     axios
       .get(getUrl)
