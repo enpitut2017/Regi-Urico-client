@@ -22,7 +22,6 @@ class App extends Component {
           <Route path="/create_event" component={CreateEventForm} />
           <Route path="/items_dashboard" component={ItemsDashboard} />
           <Route path="/event_dashboard" component={NoMatch} />
-          <Route path="/register" component={Register} />
           <Route component={NoMatch} />
         </Switch>
       </BrowserRouter>

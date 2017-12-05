@@ -24,6 +24,6 @@ export const BASE_URI = switchByEnv({
 });
 
 export const EVENTS_URI = `/events/`;
+export const EVENT_ITEMS_URI = `/event_items`;
 export const SIGNIN_URI = `/signin/`;
 export const SIGNUP_URI = `/sellers/`;
-export const EVENT_ITEMS_URI = `/event_items`;
