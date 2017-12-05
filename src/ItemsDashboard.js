@@ -76,7 +76,7 @@ class ItemsDashboard extends Component {
       count: ''
     };
     this.setState({
-      editItem: Object.assign({}, this.state.editItem, newItem),
+      editItem: newItem,
       itemDialog: true
     });
   }
