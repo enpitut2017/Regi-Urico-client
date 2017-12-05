@@ -6,7 +6,7 @@ import Button from 'material-ui/Button';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
 import { NullOrEmpty } from './worker-service/formService';
-import { XHRInstance } from './worker-service/axiosService';
+import { createXHRInstance } from './worker-service/axiosService';
 import { CREATE_EVENT, EVENT_NAME, BACK, EVENTS_URI } from './const/const-values';
 import { BASE_URI } from './const/urls';
 
@@ -46,9 +46,10 @@ export default class CreateEventForm extends Component {
   handleClick = async () => {
     const url = `${BASE_URI}${EVENTS_URI}`;
     const eventName = this.state.eventName;
-    const response = await XHRInstance.post(url, {name: eventName});
+    const instance = createXHRInstance();
+    const response = await instance.post(url, {name: eventName});
     localStorage.event_id = response.data.id;
-    this.setState({
+    await this.setState({
       redirect: true
     });
   }
