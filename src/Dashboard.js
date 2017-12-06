@@ -8,6 +8,7 @@ import RegiIcon from 'material-ui-icons/ShoppingCart';
 import ItemIcon from 'material-ui-icons/CardGiftcard';
 import EventIcon from 'material-ui-icons/Assignment';
 import { withNavigationBar } from './wrapper/withNavigationBar';
+import { withAuthorization } from './wrapper/withAuthorization';
 import { REGI, ITEMS_DASHBOARD, EVENTS_DASHBOARD } from './const/const-values';
 
 const styles = {
@@ -78,4 +79,4 @@ class Dashboard extends Component {
   }
 }
 
-export default withNavigationBar(Dashboard);
+export default withAuthorization(withNavigationBar(Dashboard));

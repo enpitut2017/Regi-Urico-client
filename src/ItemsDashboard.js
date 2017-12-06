@@ -8,6 +8,9 @@ import Grid from 'material-ui/Grid';
 import ItemDialog from './ItemDialog';
 import DeleteDialog from './DeleteDialog';
 import { withNavigationBar } from './wrapper/withNavigationBar';
+import { withAuthorization } from './wrapper/withAuthorization';
+import { createXHRInstance } from './worker-service/createXHRInstance';
+import createBreakpoints from 'material-ui/styles/createBreakpoints';
 
 const styles = {
   marginTop15: {
@@ -40,9 +43,10 @@ class ItemsDashboard extends Component {
 
   init = eventId => {
     if (eventId === 0) return;
+    const instance = createXHRInstance();
     const getUrl = `${BASE_URI}${EVENTS_URI}${eventId}`;
 
-    axios
+    instance
       .get(getUrl)
       .then(response => {
         if (response.status === 200) {
@@ -120,22 +124,24 @@ class ItemsDashboard extends Component {
   }
 
   onClickSave = async () => {
+    const instance = createXHRInstance();
     const url = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const data = this.state.editItem;
     data['event_id'] = this.state.event_id;
-    const response = data.item_id ? await axios.patch(url, {data}) : await axios.post(url, {data})
+    const response = data.item_id ? await instance.patch(url, {data}) : await instance.post(url, {data})
     this.setState({
       items: response.data.event_items
     });
   }
 
   execDelete = item => async () => {
+    const instance = createXHRInstance();
     const deleteUrl = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const deleteData = {
       event_id: this.props.eventId,
       item_id: item.id
     };
-    const response = await axios.delete(deleteUrl, {data: deleteData}).catch(e => e);
+    const response = await instance.delete(deleteUrl, {data: deleteData}).catch(e => e);
     this.setState({
       items: response.data.event_items
     });
@@ -177,4 +183,4 @@ class ItemsDashboard extends Component {
   }
 }
 
-export default withNavigationBar(ItemsDashboard);
+export default  withAuthorization(withNavigationBar(ItemsDashboard));
