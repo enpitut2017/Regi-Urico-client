@@ -9,7 +9,7 @@ import ItemDialog from './ItemDialog';
 import DeleteDialog from './DeleteDialog';
 import { withNavigationBar } from './wrapper/withNavigationBar';
 import { withAuthorization } from './wrapper/withAuthorization';
-import { createXHRInstance } from './worker-service/createXHRInstance';
+import { createXHRInstance } from './worker-service/axiosService';
 import createBreakpoints from 'material-ui/styles/createBreakpoints';
 
 const styles = {

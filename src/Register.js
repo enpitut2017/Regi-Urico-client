@@ -6,7 +6,7 @@ import PaymentDialog from './PaymentDialog';
 import {withAuthorization} from './wrapper/withAuthorization';
 import { BASE_URI, EVENTS_URI, REGISTER_URI } from './const/urls';
 import {withNavigationBar} from './wrapper/withNavigationBar';
-import { createXHRInstance } from './worker-service/createXHRInstance';
+import { createXHRInstance } from './worker-service/axiosService';
 
 class Register extends Component {
   constructor(props) {
