@@ -49,6 +49,7 @@ class ItemsDashboard extends Component {
           const newItems = response.data.event_items;
           this.setState({
             items: newItems,
+            event_id: eventId
           });
         } else {
           // Server rejected or server error
@@ -132,7 +133,7 @@ class ItemsDashboard extends Component {
   execDelete = item => async () => {
     const deleteUrl = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const deleteData = {
-      event_id: this.props.eventId,
+      event_id: this.state.event_id,
       item_id: item.id
     };
     const response = await axios.delete(deleteUrl, {data: deleteData}).catch(e => e);
