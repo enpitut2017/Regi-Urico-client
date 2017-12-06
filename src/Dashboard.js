@@ -61,14 +61,14 @@ class Dashboard extends Component {
                 </Link>
               </Grid>
               <Grid item xs={5} style={styles.iconColor}>
-                <Link to='/event_dashboard'>
+                {/* <Link to='/event_dashboard'>
                   <Card>
                     <CardContent style={styles.cardContentStyle}>
                       <EventIcon style={{width: 70, height: 'auto'}}/>
                       <Typography type='subheading' style={styles.fontColor}>{EVENTS_DASHBOARD}</Typography>
                     </CardContent>
                   </Card>
-                </Link>
+                </Link> */}
               </Grid>
             </Grid>
           </Paper>
