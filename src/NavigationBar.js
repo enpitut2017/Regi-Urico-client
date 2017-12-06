@@ -1,4 +1,4 @@
-import { AppBar, Button, IconButton, Toolbar, Tooltip, Typography } from 'material-ui';
+import { AppBar, Button, IconButton, Toolbar, Typography } from 'material-ui';
 import MenuIcon from 'material-ui-icons/Menu';
 import React from 'react';
 
@@ -18,15 +18,13 @@ const NavigationBar = props => {
     <nav>
       <AppBar position="fixed" style={styles.navBar}>
         <Toolbar>
-          <Tooltip placement="bottom" title={props.tooltipTitle}>
-            <IconButton
-              color="contrast"
-              aria-label="Pick a Event"
-              onClick={props.handleOpenDrawer}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Tooltip>
+          <IconButton
+            color="contrast"
+            aria-label="Pick a Event"
+            onClick={props.handleOpenDrawer}
+          >
+            <MenuIcon />
+          </IconButton>
           <Typography type="title" color="inherit" style={styles.title}>
             {props.title}
           </Typography>
