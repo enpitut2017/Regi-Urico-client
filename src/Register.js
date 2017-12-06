@@ -6,6 +6,7 @@ import PaymentDialog from './PaymentDialog';
 import {withAuthorization} from './wrapper/withAuthorization';
 import { BASE_URI, EVENTS_URI, REGISTER_URI } from './const/urls';
 import {withNavigationBar} from './wrapper/withNavigationBar';
+import { createXHRInstance } from './worker-service/axiosService';
 
 class Register extends Component {
   constructor(props) {
@@ -29,10 +30,11 @@ class Register extends Component {
 
   handleEventIdChange = event_id => {
     const getUrl = `${BASE_URI}${EVENTS_URI}${event_id}`;
+    const instance = createXHRInstance();
 
     if (Number.isNaN(parseInt(event_id, 10))) return;
 
-    axios
+    instance
       .get(getUrl)
       .then(response => {
         if (response.status === 200) {
@@ -87,12 +89,13 @@ class Register extends Component {
   }
 
   onCheckoutButton = async () => {
+    const instance = createXHRInstance();
     const url = `${BASE_URI}${REGISTER_URI}`;
     const data = {
       event_id: this.state.event_id,
       items: this.postItems
     };
-    const response = await axios.post(url, data).catch(error => console.error(error));
+    const response = await instance.post(url, data).catch(error => console.error(error));
     this.setState({
       items: response.data.event_items,
       open: false,
