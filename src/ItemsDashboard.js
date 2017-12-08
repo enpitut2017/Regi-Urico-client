@@ -127,7 +127,7 @@ class ItemsDashboard extends Component {
     const instance = createXHRInstance();
     const url = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const data = this.state.editItem;
-    data['event_id'] = this.state.event_id;
+    data['event_id'] = this.props.event_id;
     const response = data.item_id ? await instance.patch(url, {data}) : await instance.post(url, {data})
     this.setState({
       items: response.data.event_items
@@ -138,7 +138,7 @@ class ItemsDashboard extends Component {
     const instance = createXHRInstance();
     const deleteUrl = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const deleteData = {
-      event_id: this.props.eventId,
+      event_id: this.props.event_id,
       item_id: item.id
     };
     const response = await instance.delete(deleteUrl, {data: deleteData}).catch(e => e);
