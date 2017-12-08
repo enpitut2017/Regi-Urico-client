@@ -4,11 +4,9 @@ import axios from 'axios';
 
 import { BASE_URI, EVENTS_URI } from '../const/urls';
 import {
-  CLOSE_EVENTS_LIST,
   CONFIRM_LOGOUT,
   CONFIRM_LOGOUT_TEXT,
-  LOGOUT,
-  OPEN_EVENTS_LIST,
+  LOGOUT
 } from '../const/const-values';
 import EventsListDrawer from '../EventsListDrawer';
 import NavigationBar from '../NavigationBar';
@@ -138,9 +136,6 @@ export const withNavigationBar = InnerComponent => {
             <header>
               <NavigationBar
                 title={this.state.title}
-                tooltipTitle={
-                  this.state.openDrawer ? CLOSE_EVENTS_LIST : OPEN_EVENTS_LIST
-                }
                 handleSignOut={this.handleSignOut}
                 handleOpenDrawer={this.handleOpenDrawer}
                 authorized={true}

@@ -36,7 +36,5 @@ export const THE_CHANGE = `お釣り`;
 export const YEN = `円`;
 export const YEN_MARK = `¥`;
 
-export const CLOSE_EVENTS_LIST = `${EVENTS_LIST}を閉じる`;
 export const CONFIRM_LOGOUT = `${LOGOUT}（確認）`;
 export const CONFIRM_LOGOUT_TEXT = `本当に${LOGOUT}しますか？`;
-export const OPEN_EVENTS_LIST = `${EVENTS_LIST}を開く`;
