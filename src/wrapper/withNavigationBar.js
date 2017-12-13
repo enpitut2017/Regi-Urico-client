@@ -63,7 +63,7 @@ export const withNavigationBar = InnerComponent => {
           headers: {'X-Authorized-Token': token},
         })
         .then(response => {
-          const newEvents = response.data.event;
+          const newEvents = response.data.events;
           if (newEvents === undefined || newEvents.length <= 0) {
             this.setState({redirectToCreateEvent: true});
           } else {
@@ -96,6 +96,10 @@ export const withNavigationBar = InnerComponent => {
     handleOpenDrawer = () => {
       // TODO: Drawer描画コンポーネントの作成
       this.setState({openDrawer: true});
+    }
+
+    handleGoBack = () => {
+      this.props.history.goBack();
     }
 
     handleRequestCloseDrawer = () => {
@@ -138,7 +142,9 @@ export const withNavigationBar = InnerComponent => {
                 title={this.state.title}
                 handleSignOut={this.handleSignOut}
                 handleOpenDrawer={this.handleOpenDrawer}
+                handleGoBack={this.handleGoBack}
                 authorized={true}
+                goBack={this.props.location.pathname!=="/"}
               />
             </header>
             <div style={styles.content}>
