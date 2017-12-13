@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import Register from './Register';
 import DashBoard from './Dashboard';
 import ItemsDashboard from './ItemsDashboard';
+import AccountDashboard from './AccountDashboard';
 import CreateEventForm from './CreateEventForm';
 import LoginForm from './LoginForm';
 import CreateAccountForm from './CreateAccountForm';
@@ -23,6 +24,7 @@ class App extends Component {
           <Route path="/register" component={Register} />
           <Route path="/items_dashboard" component={ItemsDashboard} />
           <Route path="/event_dashboard" component={NoMatch} />
+          <Route path="/account" component={AccountDashboard} />
           <Route component={NoMatch} />
         </Switch>
       </BrowserRouter>

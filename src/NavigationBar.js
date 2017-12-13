@@ -1,8 +1,13 @@
-import { AppBar, Button, IconButton, Toolbar, Typography } from 'material-ui';
+import { AppBar, Button, IconButton, Menu, MenuItem, Toolbar, Typography } from 'material-ui';
 import MenuIcon from 'material-ui-icons/Menu';
+import AccountCircle from 'material-ui-icons/AccountCircle';
 import React from 'react';
 
-import { LOGOUT } from './const/const-values';
+import {
+  CHANGE_ACCOUNT_INFO,
+  DELETE_ACCOUNT,
+  LOGOUT
+} from './const/const-values';
 
 const styles = {
   navBar: {
@@ -14,6 +19,7 @@ const styles = {
 }
 
 const NavigationBar = props => {
+  const open = Boolean(props.anchorEl);
   return (
     <nav>
       <AppBar position="fixed" style={styles.navBar}>
@@ -28,9 +34,34 @@ const NavigationBar = props => {
           <Typography type="title" color="inherit" style={styles.title}>
             {props.title}
           </Typography>
-          <Button color="contrast" onClick={props.handleSignOut}>
+          {/* <Button color="contrast" onClick={props.handleSignOut}>
             {LOGOUT}
-          </Button>
+          </Button> */}
+          <IconButton
+            aria-owns={open ? 'menu-appbar' : null}
+            aria-haspopup="true"
+            onClick={props.handleOpenAccountMenu}
+            color="contrast"
+          >
+            <AccountCircle />
+          </IconButton>
+          <Menu
+            id="menu-appbar"
+            anchorEl={props.anchorEl}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={open}
+            onRequestClose={props.handleRequestClose}
+          >
+            <MenuItem onClick={props.handleChangeAccountInfoClick}>{CHANGE_ACCOUNT_INFO}</MenuItem>
+            <MenuItem onClick={props.handleSignOut}>{LOGOUT}</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
     </nav>
