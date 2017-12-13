@@ -21,8 +21,8 @@ const switchByEnv = values => {
 export const BASE_URI = switchByEnv({
   development: `http://localhost:3001`,
   test: `http://localhost:3001`,
-  production: `http://210.140.221.144`,
-  default: `http://210.140.221.144`
+  production: `http://regi-urico.duckdns.org`,
+  default: `http://regi-urico.duckdns.org`
 });
 
 export const EVENTS_URI = `/events/`;
