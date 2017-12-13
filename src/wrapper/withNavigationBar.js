@@ -71,7 +71,7 @@ export const withNavigationBar = InnerComponent => {
           headers: {'X-Authorized-Token': token},
         })
         .then(response => {
-          const newEvents = response.data.event;
+          const newEvents = response.data.events;
           if (newEvents === undefined || newEvents.length <= 0) {
             this.setState({redirectToCreateEvent: true});
           } else {
@@ -143,7 +143,6 @@ export const withNavigationBar = InnerComponent => {
     }
 
     render() {
-      console.log(this.props.location)
       const provideProps = {
         event_id: this.state.event_id,
       };
@@ -152,6 +151,7 @@ export const withNavigationBar = InnerComponent => {
       } else if (this.state.redirectToCreateEvent) {
         return <Redirect to="/create_event" />;
       } else if (this.state.redirectToAccountDashboard && this.props.location.pathname !== "/account") {
+        return <Redirect to="/account" />
       } else {
         return (
           <div>

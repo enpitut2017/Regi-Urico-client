@@ -25,6 +25,8 @@ export const BASE_URI = switchByEnv({
   default: `http://210.140.221.144`
 });
 
+export const CHANGE_ACCOUNT_URI = `/sellers/`;
+export const DELETE_ACCOUNT_URI = `/sellers/`;
 export const EVENTS_URI = `/events/`;
 export const EVENT_ITEMS_URI = `/event_items`;
 export const REGISTER_URI = `/register`;
