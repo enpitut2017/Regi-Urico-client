@@ -9,6 +9,8 @@ import { NullOrEmpty } from './worker-service/formService';
 import { createXHRInstance } from './worker-service/axiosService';
 import { CREATE_EVENT, EVENT_NAME, BACK, EVENTS_URI } from './const/const-values';
 import { BASE_URI } from './const/urls';
+import { withAuthorization } from './wrapper/withAuthorization';
+import { withNavigationBar } from './wrapper/withNavigationBar';
 
 const styles = {
   gridPaper: {
@@ -25,7 +27,7 @@ const styles = {
   }
 };
 
-export default class CreateEventForm extends Component {
+class CreateEventForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -102,3 +104,5 @@ export default class CreateEventForm extends Component {
     return this.renderCreateEventForm();
   }
 }
+
+export default withAuthorization(withNavigationBar(CreateEventForm));
