@@ -45,10 +45,18 @@ export const withNavigationBar = InnerComponent => {
         openDialog: false,
         redirectToSignin: false,
         redirectToCreateEvent: false,
+        redirectToAccountDashboard: false,
+        accountMenuAnchorEl: null
       };
     }
 
     componentWillMount = () => {
+      this.setState({
+        redirectToSignin: false,
+        redirectToCreateEvent: false,
+        redirectToAccountDashboard: false,
+        accountMenuAnchorEl: null
+      });
       this.getEvents();
     }
 
@@ -140,6 +148,17 @@ export const withNavigationBar = InnerComponent => {
         event_id: response.data.id,
         title: response.data.name
       });
+
+    handleOpenAccountMenu = event => {
+      this.setState({accountMenuAnchorEl: event.currentTarget});
+    }
+
+    handleChangeAccountInfoClick = () => {
+      this.setState({redirectToAccountDashboard: true});
+    }
+
+    handleRequestClose = () => {
+      this.setState({accountMenuAnchorEl: null});
     }
 
     render() {
@@ -153,6 +172,8 @@ export const withNavigationBar = InnerComponent => {
         return <Redirect to="/signin" />;
       } else if (this.state.redirectToCreateEvent) {
         return <Redirect to="/create_event" />;
+      } else if (this.state.redirectToAccountDashboard && this.props.location.pathname !== "/account") {
+        return <Redirect to="/account" />
       } else {
         return (
           <div>
@@ -161,6 +182,11 @@ export const withNavigationBar = InnerComponent => {
                 title={this.state.title}
                 handleSignOut={this.handleSignOut}
                 handleOpenDrawer={this.handleOpenDrawer}
+                handleOpenAccountMenu={this.handleOpenAccountMenu}
+                handleChangeAccountInfoClick={this.handleChangeAccountInfoClick}
+                handleSignOut={this.handleSignOut}
+                handleRequestClose={this.handleRequestClose}
+                anchorEl={this.state.accountMenuAnchorEl}
                 handleGoBack={this.handleGoBack}
                 authorized={true}
                 goBack={this.props.location.pathname!=="/"}
