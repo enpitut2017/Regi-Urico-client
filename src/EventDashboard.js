@@ -1,4 +1,4 @@
-import React, { Componet } from 'react';
+import React, { Component } from 'react';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Card, { CardContent, CardActions } from 'material-ui/Card';
@@ -10,43 +10,90 @@ import TextFiled from 'material-ui/TextField';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
 import { TextField } from 'material-ui';
-import { EVENT_NAME, EVENTS_LIST } from './const/const-values';
 import EventDialog from './EventDialog';
+import DeleteEventDialog from './DeleteEventDialog';
+import { createXHRInstance } from './worker-service/axiosService';
+import { EVENT_NAME, EVENTS_LIST } from './const/const-values';
 import { BASE_URI, EVENTS_URI } from './const/urls';
 
-class EventDashboard extends Componet {
+class EventDashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      eventId: props.event_id,
-      eventName: '',
-      dialog: false
+      event: {
+        id: props.event_id,
+        name: props.event_name
+      },
+      editDialog: false,
+      deleteDialog: false
     }
   }
 
   componentWillReceiveProps = nextProps => {
     this.setState({
-      eventId: nextProps.event_id,
-      eventName: nextProps.event_name
+      event: {
+        id: nextProps.event_id,
+        name: nextProps.event_name
+      }
     });
   }
 
-  onRequestClose = () => {
+  openEditDialog = () => {
     this.setState({
-      dialog: false
+      editDialog: true
+    });
+  }
+
+  openDeleteDialog = () => {
+    this.setState({
+      deleteDialog: true
+    });
+  }
+
+  onRequestEditClose = () => {
+    this.setState({
+      editDialog: false
+    });
+  }
+
+  onRequestDeleteClose = () => {
+    this.setState({
+      deleteDialog: false
     });
   }
 
   handleChange = event => {
     const eventName = event.target.value;
     this.setState({
-      eventName
+      event: Object.assign({}, this.state.event, {name: eventName})
     });
   }
 
-  onClickSave = async () => {
+  handleDelete = () => {
+    const instance = createXHRInstance();
     const url = `${BASE_URI}${EVENTS_URI}`;
-    // const data = this.
+    const event = {
+      id: this.state.event.id
+    };
+
+    instance
+      .delete(url, event)
+      .then(response => {
+        this.state.changeEventForEventDashboard(response.id);
+        this.setState({
+          deleteDialog: false
+        });
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  onClickSave = () => {
+    this.props.renameEventNameForEventDashboard(this.state.event.name);
+    this.setState({
+      editDialog: false
+    });
   }
 
   render() {
@@ -57,22 +104,28 @@ class EventDashboard extends Componet {
             <Paper>
               <Card>
                 <CardContent>
-                  <Typography>{this.state.eventName}</Typography>
+                  <Typography>{this.state.event.name}</Typography>
                 </CardContent>
                 <CardActions>
-                  <Button raised color='accent' onClick={this.handleDelete}><DeleteIcon/></Button>
-                  <Button raised color='primary' onClick={this.handleEdit}><EditIcon/></Button>
+                  <Button raised color='accent' onClick={this.openDeleteDialog}><DeleteIcon/></Button>
+                  <Button raised color='primary' onClick={this.openEditDialog}><EditIcon/></Button>
                 </CardActions>
               </Card>
             </Paper>
           </Grid>
         </Grid>
         <EventDialog
-          open={this.state.dialog}
-          onRequestClose={this.onRequestClose}
+          open={this.state.editDialog}
+          onRequestClose={this.onRequestEditClose}
           event={this.state.event}
           handleChange={this.handleChange}
           onClickSave={this.onClickSave}
+        />
+        <DeleteEventDialog
+          open={this.state.deleteDialog}
+          onRequestClose={this.onRequestDeleteClose}
+          event={this.state.event}
+          handleDelete={this.handleDelete}
         />
       </div>
     );
