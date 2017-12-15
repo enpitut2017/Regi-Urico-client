@@ -148,6 +148,7 @@ export const withNavigationBar = InnerComponent => {
         event_id: response.data.id,
         title: response.data.name
       });
+    }
 
     handleOpenAccountMenu = event => {
       this.setState({accountMenuAnchorEl: event.currentTarget});
