@@ -19,7 +19,6 @@ const styles = {
 
 class EventDialog extends Component {
   render() {
-    const hasError = NullOrEmpty(this.props.item.name) || NullOrEmpty(this.props.item.price) || NullOrEmpty(this.props.item.count);
     return (
       <Dialog onRequestClose={this.props.onRequestClose} open={this.props.open}>
         <DialogTitle style={styles.center}></DialogTitle>
@@ -28,14 +27,14 @@ class EventDialog extends Component {
             name='eventName'
             label={EVENT_NAME}
             value={this.props.event.name}
-            onChange={e => this.props.handleChange('eventName', e.target.value)}
+            onChange={this.props.handleChange}
             type="text"
             fullWidth
            />
         </DialogContent>
         <DialogActions>
           <Button color="accent" onClick={this.props.onRequestClose}>{CANCEL}</Button>
-          <Button disabled={hasError} color="primary" onClick={this.props.onClickSave}>{SAVE}</Button>
+          <Button color="primary" onClick={this.props.onClickSave}>{SAVE}</Button>
         </DialogActions>
       </Dialog>
     );
