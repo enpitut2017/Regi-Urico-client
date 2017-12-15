@@ -63,7 +63,7 @@ export const withNavigationBar = InnerComponent => {
           headers: {'X-Authorized-Token': token},
         })
         .then(response => {
-          const newEvents = response.data.event;
+          const newEvents = response.data.events;
           if (newEvents === undefined || newEvents.length <= 0) {
             this.setState({redirectToCreateEvent: true});
           } else {
