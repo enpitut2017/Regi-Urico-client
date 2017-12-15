@@ -8,10 +8,13 @@ import {
   CONFIRM_LOGOUT_TEXT,
   LOGOUT
 } from '../const/const-values';
+import {
+  addReloadNotification,
+} from '../worker-service/reloadNotificationService';
+import { createXHRInstance } from '../worker-service/axiosService';
 import EventsListDrawer from '../EventsListDrawer';
 import NavigationBar from '../NavigationBar';
 import SimpleDialog from '../SimpleDialog';
-import { createXHRInstance } from '../worker-service/axiosService';
 
 const styles = {
   content: {
@@ -30,6 +33,7 @@ export const withNavigationBar = InnerComponent => {
     constructor(props) {
       super(props);
       this.state = this.getInitialState();
+      addReloadNotification();
     }
 
     init = () => {
