@@ -8,13 +8,13 @@ class EventItemsList extends Component{
       return (
         <EventItem
           key={index}
-          item_id={item.item_id}
+          item_id={item.id}
           name={item.name}
           price={item.price}
           count={item.count}
           diffCount={item.diff_count}
           onDiffCountChange={this.props.onDiffCountChange}
-          ref={`EventItem-${item.item_id}`}
+          ref={`EventItem-${item.id}`}
         />
       );
     });

@@ -140,7 +140,7 @@ class ItemsDashboard extends Component {
     const deleteUrl = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const deleteData = {
       event_id: this.props.event_id,
-      item_id: item.id
+      item_id: item.item_id
     };
     const response = await instance.delete(deleteUrl, {data: deleteData}).catch(e => e);
     if (response === undefined || response === null) return;
