@@ -2,7 +2,18 @@ import { IconButton, Snackbar } from 'material-ui';
 import CloseIcon from 'material-ui-icons/Close';
 import React from 'react';
 
-const ErrorMessageSnackBar = props => {
+import FeedbackSnackbarMessageItemsList from
+  './FeedbackSnackbarMessageItemsList';
+
+/**
+ *エラーメッセージの出力先のSnackbar。
+ * @param {object} props = {
+ *   open: bool,
+ *   onRequestClose: () => void
+ *   messages: [string]
+ * }
+ */
+const FeedbackSnackbar = props => {
   return (
     <Snackbar
       anchorOrigin={{
@@ -15,7 +26,7 @@ const ErrorMessageSnackBar = props => {
       SnackbarContentProps={{
         'aria-describedby': 'message-id',
       }}
-      message={<span id="message-id">{props.message}</span>}
+      message={<FeedbackSnackbarMessageItemsList items={props.messages} />}
       action={[
         <IconButton
           key="close"
@@ -30,4 +41,4 @@ const ErrorMessageSnackBar = props => {
   );
 }
 
-export default ErrorMessageSnackBar;
+export default FeedbackSnackbar;

@@ -20,7 +20,7 @@ import { buildErrorMessage } from './worker-service/errorMessageService';
 import { createXHRInstance } from './worker-service/axiosService';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
-import ErrorMessageSnackBar from './ErrorMessageSnackbar';
+import FeedbackSnackbar from './FeedbackSnackbar';
 
 const styles = {
   gridStyle: {
@@ -53,7 +53,7 @@ class AccountDashboard extends Component {
       confirmDelete: '',
       redirectToRoot: false,
       openSnackbar: false,
-      message: ''
+      messages: []
     }
   }
 
@@ -104,13 +104,13 @@ class AccountDashboard extends Component {
           this.setState({
             name: response.data.name,
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_SUCCESS
+            messages: [CHANGE_ACCOUNT_SUCCESS]
           });
         } else {
           // Undefined Fatal Error
           this.setState({
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_FATAL_ERROR
+            messages: [CHANGE_ACCOUNT_FATAL_ERROR]
           });
         }})
       .catch(error => {
@@ -118,13 +118,13 @@ class AccountDashboard extends Component {
           // Not reach to Server
           this.setState({
             openSnackbar: true,
-            message: NETWORK_REACH_ERROR
+            messages: [NETWORK_REACH_ERROR]
           });
         } else if (error.response.status === 400) {
           //  bad request
           this.setState({
             openSnackbar: true,
-            message: buildErrorMessage(error.response.data.errors)
+            messages: buildErrorMessage(error.response.data.errors)
           });
         } else if (error.response.status === 401) {
           // Unauthorized
@@ -134,7 +134,7 @@ class AccountDashboard extends Component {
           // Undefined Fatal Error
           this.setState({
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_FATAL_ERROR
+            messages: [CHANGE_ACCOUNT_FATAL_ERROR]
           });
         }
         console.error(error);
@@ -148,7 +148,7 @@ class AccountDashboard extends Component {
         password: this.state.confirmDelete
       }})
       .then(response => {
-        if (response.status == 204) {
+        if (response !== undefined && response !== null && response.status == 204) {
           // success to delete
           localStorage.removeItem('authorizedToken');
           this.setState({redirectToRoot: true});
@@ -156,7 +156,7 @@ class AccountDashboard extends Component {
           // Undefined Fatal Error
           this.setState({
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_FATAL_ERROR
+            messages: [CHANGE_ACCOUNT_FATAL_ERROR]
           });
         }})
       .catch(error => {
@@ -164,13 +164,13 @@ class AccountDashboard extends Component {
           // Not reach to Server
           this.setState({
             openSnackbar: true,
-            message: NETWORK_REACH_ERROR
+            messages: [NETWORK_REACH_ERROR]
           });
         } else if (error.response.status === 400) {
           //  bad request
           this.setState({
             openSnackbar: true,
-            message: buildErrorMessage(error.response.data.errors)
+            messages: buildErrorMessage(error.response.data.errors)
           });
         } else if (error.response.status === 401) {
           // Unauthorized
@@ -180,7 +180,7 @@ class AccountDashboard extends Component {
           // Undefined Fatal Error
           this.setState({
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_FATAL_ERROR
+            messages: [CHANGE_ACCOUNT_FATAL_ERROR]
           });
         }
         console.error(error);
@@ -297,10 +297,10 @@ class AccountDashboard extends Component {
               </Paper>
             </Grid>
           </Grid>
-          <ErrorMessageSnackBar
+          <FeedbackSnackbar
             open={this.state.openSnackbar}
             onRequestClose={this.handleRequestCloseSnackbar}
-            message={this.state.message}
+            messages={this.state.messages}
           />
         </div>
       );

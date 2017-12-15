@@ -1,16 +1,25 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import EditableEventItemsList from './EditableEventItemsList.js';
-import { BASE_URI, EVENTS_URI, EVENT_ITEMS_URI } from './const/urls';
-import Button from 'material-ui/Button';
+import { Redirect } from 'react-router-dom';
 import AddIcon from 'material-ui-icons/Add'
+import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
-import ItemDialog from './ItemDialog';
-import DeleteDialog from './DeleteDialog';
-import { withNavigationBar } from './wrapper/withNavigationBar';
-import { withAuthorization } from './wrapper/withAuthorization';
+import React, { Component } from 'react';
+
+import { BASE_URI, EVENTS_URI, EVENT_ITEMS_URI } from './const/urls';
+import {
+  DELETE_EVENTITEM_FATAL_ERROR,
+  GET_EVENTS_FATAL_ERROR,
+  NETWORK_REACH_ERROR,
+  PATCH_EVENTITEM_FATAL_ERROR,
+  POST_EVENTITEM_FATAL_ERROR,
+} from './const/const-values';
+import { buildErrorMessage } from './worker-service/errorMessageService';
 import { createXHRInstance } from './worker-service/axiosService';
-import createBreakpoints from 'material-ui/styles/createBreakpoints';
+import { withAuthorization } from './wrapper/withAuthorization';
+import { withNavigationBar } from './wrapper/withNavigationBar';
+import DeleteDialog from './DeleteDialog';
+import EditableEventItemsList from './EditableEventItemsList.js';
+import FeedbackSnackbar from './FeedbackSnackbar';
+import ItemDialog from './ItemDialog';
 
 const styles = {
   marginTop15: {
@@ -32,7 +41,10 @@ class ItemsDashboard extends Component {
         name: '',
         price: '',
         count: ''
-      }
+      },
+      redirectToRoot: false,
+      openSnackbar: false,
+      messages: []
     };
     this.init(this.props.event_id);
   }
@@ -55,10 +67,42 @@ class ItemsDashboard extends Component {
             items: newItems,
           });
         } else {
-          // Server rejected or server error
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [GET_EVENTS_FATAL_ERROR]
+          });
         }})
       .catch(error => {
-        // Not reach to Server
+        if (error.response === undefined) {
+          // Not reach to Server
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          })
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          localStorage.removeItem('authorizedToken');
+          this.setState({redirectToRoot: true});
+        } else if (error.response.status === 403) {
+          // Forbidden to get events whose owner isn't current user
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else if (error.response.status === 404) {
+          // Event Not Found
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [GET_EVENTS_FATAL_ERROR]
+          });
+        }
         console.error(error);
       });
   }
@@ -128,11 +172,73 @@ class ItemsDashboard extends Component {
     const url = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const data = this.state.editItem;
     data['event_id'] = this.props.event_id;
-    const response = data.item_id ? await instance.patch(url, data) : await instance.post(url, data)
-    if (response === undefined || response === null) return;
-    this.setState({
-      items: response.data.items
-    });
+    if (data.item_id) {
+      const response = await instance.patch(url, data).catch(error => {
+        if (error.response === undefined) {
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          localStorage.removeItem('authorizedToken');
+          this.setState({redirectToRoot: true});
+        } else if (error.response.status === 404) {
+          // EventItem Not Found
+          this.setState({
+            items: error.response.data.items
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [PATCH_EVENTITEM_FATAL_ERROR]
+          });
+        }
+      });
+      if (response === undefined || response === null) return;
+      // Success to Patch
+      this.setState({
+        items: response.data.items
+      });
+    } else {
+      const response = await instance.post(url, data).catch(error => {
+        if (error.response === undefined) {
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 400) {
+          // Bad request
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          localStorage.removeItem('authorizedToken');
+          this.setState({redirectToRoot: true});
+        } else if (error.response.status === 404) {
+          // EventItem Not Found
+          // client側のitemテーブルが間違っている可能性があるので
+          // サーバ側がitemテーブルを送り直してくる。
+          this.setState({
+            items: error.response.data.items
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [POST_EVENTITEM_FATAL_ERROR]
+          });
+        }
+      });
+      if (response === undefined || response === null) return;
+      // Success to post
+      this.setState({
+        items: response.data.items
+      });
+    }
   }
 
   execDelete = item => async () => {
@@ -142,14 +248,44 @@ class ItemsDashboard extends Component {
       event_id: this.props.event_id,
       item_id: item.id
     };
-    const response = await instance.delete(deleteUrl, {data: deleteData}).catch(e => e);
+    const response = await instance.delete(deleteUrl, {data: deleteData}).catch(error => {
+      if (error.response === undefined) {
+        this.setState({
+          openSnackbar: true,
+          messages: [NETWORK_REACH_ERROR]
+        });
+      } else if (error.response.status === 401) {
+        // Unauthorized
+        localStorage.removeItem('authorizedToken');
+        this.setState({redirectToRoot: true});
+      } else if (error.response.status === 404) {
+        // EventItem Not Found
+        // client側のitemテーブルが間違っている可能性があるので
+        // サーバ側がitemテーブルを送り直してくる。
+        this.setState({
+          items: error.response.data.items
+        });
+      } else {
+        // Undefined Fatal Error
+        this.setState({
+          openSnackbar: true,
+          messages: [DELETE_EVENTITEM_FATAL_ERROR]
+        });
+      }
+    });
     if (response === undefined || response === null) return;
+    // Success to delete
     this.setState({
       items: response.data.items
     });
   }
 
+  onRequestFeedbackSnackbarClose = () => {
+    this.setState({openSnackbar: false});
+  }
+
   render() {
+    if (this.state.redirectToRoot) return <Redirect to="/" />
     return (
       <div>
         <Grid container>
@@ -179,6 +315,11 @@ class ItemsDashboard extends Component {
           open={this.state.deleteDialog}
           item={this.state.deleteItem}
           handleDelete={this.execDelete}
+        />
+        <FeedbackSnackbar
+          open={this.state.openSnackbar}
+          onRequestClose={this.onRequestFeedbackSnackbarClose}
+          messages={this.state.messages}
         />
       </div>
     );

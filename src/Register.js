@@ -1,12 +1,20 @@
+import { Redirect } from 'react-router-dom';
 import React, { Component } from 'react';
-import axios from 'axios';
-import PaymentButton from './PaymentButton.js';
-import EventItemsList from './EventItemsList.js';
-import PaymentDialog from './PaymentDialog';
-import {withAuthorization} from './wrapper/withAuthorization';
+
 import { BASE_URI, EVENTS_URI, REGISTER_URI } from './const/urls';
-import {withNavigationBar} from './wrapper/withNavigationBar';
+import {
+  GET_EVENTS_FATAL_ERROR,
+  NETWORK_REACH_ERROR,
+  REGISTER_FATAL_ERROR,
+} from './const/const-values';
+import { buildErrorMessage } from './worker-service/errorMessageService';
 import { createXHRInstance } from './worker-service/axiosService';
+import {withAuthorization} from './wrapper/withAuthorization';
+import {withNavigationBar} from './wrapper/withNavigationBar';
+import EventItemsList from './EventItemsList.js';
+import FeedbackSnackbar from './FeedbackSnackbar';
+import PaymentButton from './PaymentButton.js';
+import PaymentDialog from './PaymentDialog';
 
 class Register extends Component {
   constructor(props) {
@@ -20,7 +28,10 @@ class Register extends Component {
       items: [],
       disablePaymentButton: true,
       open: false,
-      sumPrice: 0
+      sumPrice: 0,
+      openSnackbar: false,
+      messages: [],
+      redirectToRoot: false
     };
   }
 
@@ -37,7 +48,7 @@ class Register extends Component {
     instance
       .get(getUrl)
       .then(response => {
-        if (response.status === 200) {
+        if (response !== undefined && response !== null && response.status === 200) {
           const newItems = response.data.items;
           this.setState({
             event_id: event_id,
@@ -45,10 +56,42 @@ class Register extends Component {
             disablePaymentButton: !(newItems.length > 0 && newItems.some(object => object.diff_count !== 0))
           });
         } else {
-          // Server rejected or server error
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [GET_EVENTS_FATAL_ERROR]
+          });
         }})
       .catch(error => {
-        // Not reach to Server
+        if (error.response === undefined) {
+          // Not reach to Server
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          localStorage.removeItem('authorizedToken');
+          this.setState({redirectToRoot: true});
+        } else if (error.response.status === 403) {
+          // Forbidden to get events whose owner isn't current user
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else if (error.response.status === 404) {
+          // Event Not Found
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [GET_EVENTS_FATAL_ERROR]
+          });
+        }
         console.error(error);
       });
   }
@@ -95,8 +138,34 @@ class Register extends Component {
       event_id: this.state.event_id,
       items: this.postItems
     };
-    const response = await instance.post(url, data).catch(error => console.error(error));
-    console.dir(response);
+    const response = await instance.post(url, data).catch(error => {
+      if (error.response === undefined) {
+        // Not reach to Server
+        this.setState({
+          openSnackbar: true,
+          messages: [NETWORK_REACH_ERROR]
+        });
+      } else if (error.response.status === 403) {
+        // Forbidden to modify logs whose owner isn't current user
+        this.setState({
+          openSnackbar: true,
+          messages: buildErrorMessage(error.response.data.errors)
+        });
+      } else if (error.response.status === 404) {
+        // Event or one or more Items Not Found
+        this.setState({
+          openSnackbar: true,
+          messages: buildErrorMessage(error.response.data.errors)
+        });
+      } else {
+        // Undefined Fatal Error
+        this.setState({
+          openSnackbar: true,
+          messages: [REGISTER_FATAL_ERROR]
+        });
+      }
+      console.error(error);
+    });
     if (response === undefined || response === null) return;
     this.setState({
       items: response.data.items,
@@ -127,9 +196,14 @@ class Register extends Component {
     }
   }
 
+  handleRequestClose = () => {
+    this.setState({openSnackbar: false});
+  }
+
   render() {
+    if (this.state.redirectToRoot) return <Redirect to="/" />;
     return (
-      <div className="App">
+      <div>
         <EventItemsList
           items={this.state.items}
           onDiffCountChange={this.updateDisablePaymentButton}
@@ -137,6 +211,11 @@ class Register extends Component {
         />
         <PaymentButton onClick={this.onPaymentClick} disabled={this.state.disablePaymentButton} />
         <PaymentDialog open={this.state.open} sumPrice={this.state.sumPrice} onRequestClose={this.onRequestClose} onCheckoutButton={this.onCheckoutButton}/>
+        <FeedbackSnackbar
+          open={this.state.openSnackbar}
+          onRequestClose={this.handleRequestClose}
+          messages={this.state.messages}
+        />
       </div>
     );
   }
