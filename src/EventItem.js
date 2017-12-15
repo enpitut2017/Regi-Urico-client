@@ -27,7 +27,7 @@ class EventItem extends Component{
     });
   }
 
-  onClick(event, type) {
+  onClick = type => {
     let newDiffCount = this.state.diffCount;
     switch(type) {
       case MINUS:
@@ -57,13 +57,13 @@ class EventItem extends Component{
         <CardActions>
           <Grid container>
               <Grid item xs={4}>
-               <Button raised color="primary" className={this.classes.button} onClick={(e) => this.onClick(e, MINUS)} >{MINUS}</Button>
+               <Button raised color="primary" className={this.classes.button} onClick={() => this.onClick(MINUS)} >{MINUS}</Button>
               </Grid>
               <Grid item xs={4}>
                 <Button>{`${this.state.diffCount}`}</Button>
               </Grid>
               <Grid item xs={4}>
-                <Button raised color="accent" onClick={(e) => this.onClick(e, PLUS)} >{PLUS}</Button>
+                <Button raised color="accent" onClick={() => this.onClick(PLUS)} >{PLUS}</Button>
               </Grid>
           </Grid>
         </CardActions>
