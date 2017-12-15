@@ -11,6 +11,7 @@ import {
 import EventsListDrawer from '../EventsListDrawer';
 import NavigationBar from '../NavigationBar';
 import SimpleDialog from '../SimpleDialog';
+import { createXHRInstance } from '../worker-service/axiosService';
 
 const styles = {
   content: {
@@ -122,9 +123,27 @@ export const withNavigationBar = InnerComponent => {
       this.setState({redirectToSignin: true});
     }
 
+    renameEventNameForEventDashboard = async eventName => {
+      const url = `${BASE_URI}${EVENTS_URI}`;
+      const instance = createXHRInstance();
+      const event = {
+        event_id: this.state.event_id,
+        name: eventName
+      };
+      const response = await instance.patch(url, event).catch(error => console.error(error));
+      if (response === undefined || response === null) return;
+      this.setState({
+        event_id: response.data.id,
+        title: response.data.name
+      });
+    }
+
     render() {
       const provideProps = {
         event_id: this.state.event_id,
+        event_name: this.state.title,
+        renameEventNameForEventDashboard: this.renameEventNameForEventDashboard,
+        changeEventForEventDashboard: this.handleClickEventItem
       };
       if (this.state.redirectToSignin) {
         return <Redirect to="/signin" />;
