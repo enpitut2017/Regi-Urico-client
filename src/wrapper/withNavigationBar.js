@@ -127,7 +127,7 @@ export const withNavigationBar = InnerComponent => {
       const url = `${BASE_URI}${EVENTS_URI}`;
       const instance = createXHRInstance();
       const event = {
-        event_id: this.state.event_id,
+        id: this.state.event_id,
         name: eventName
       };
       const response = await instance.patch(url, event).catch(error => console.error(error));
