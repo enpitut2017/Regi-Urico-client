@@ -21,8 +21,8 @@ const switchByEnv = values => {
 export const BASE_URI = switchByEnv({
   development: `http://localhost:3001`,
   test: `http://localhost:3001`,
-  production: `http://regi-urico.duckdns.org`,
-  default: `http://regi-urico.duckdns.org`
+  production: `http://regi-urico.duckdns.org/api`,
+  default: `http://regi-urico.duckdns.org/api`
 });
 
 export const CHANGE_ACCOUNT_URI = `/sellers/`;
