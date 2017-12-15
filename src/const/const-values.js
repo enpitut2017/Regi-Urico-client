@@ -38,6 +38,7 @@ export const NOT_HAVE_ACCOUNT = `初めてのご利用ですか？`;
 export const OK = `OK`;
 export const PAGE_NOT_FOUND = `お探しのページは見つかりませんでした。`;
 export const PASSWORD = `パスワード`;
+export const PATCH_EVENT_FATAL_ERROR = `イベント更新に失敗しました`;
 export const PATCH_EVENTITEM_FATAL_ERROR = `アイテム更新に失敗しました`;
 export const PAYMENT = `お支払`;
 export const PLUS = `+`;

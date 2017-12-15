@@ -33,13 +33,15 @@ class Register extends Component {
       messages: [],
       redirectToRoot: false
     };
+    this.init(this.props.event_id);
   }
 
   componentWillReceiveProps = nextProps => {
-    this.handleEventIdChange(nextProps.event_id);
+    this.init(nextProps.event_id);
   }
 
-  handleEventIdChange = event_id => {
+  init = event_id => {
+    if (event_id === 0) return;
     const getUrl = `${BASE_URI}${EVENTS_URI}${event_id}`;
     const instance = createXHRInstance();
 
