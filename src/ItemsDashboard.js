@@ -50,7 +50,7 @@ class ItemsDashboard extends Component {
       .get(getUrl)
       .then(response => {
         if (response.status === 200) {
-          const newItems = response.data.event_items;
+          const newItems = response.data.items;
           this.setState({
             items: newItems,
           });
@@ -128,9 +128,10 @@ class ItemsDashboard extends Component {
     const url = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const data = this.state.editItem;
     data['event_id'] = this.props.event_id;
-    const response = data.item_id ? await instance.patch(url, {data}) : await instance.post(url, {data})
+    const response = data.item_id ? await instance.patch(url, data) : await instance.post(url, data)
+    if (response === undefined || response === null) return;
     this.setState({
-      items: response.data.event_items
+      items: response.data.items
     });
   }
 
@@ -142,8 +143,9 @@ class ItemsDashboard extends Component {
       item_id: item.id
     };
     const response = await instance.delete(deleteUrl, {data: deleteData}).catch(e => e);
+    if (response === undefined || response === null) return;
     this.setState({
-      items: response.data.event_items
+      items: response.data.items
     });
   }
 
