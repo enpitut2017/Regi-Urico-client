@@ -38,7 +38,7 @@ class Register extends Component {
       .get(getUrl)
       .then(response => {
         if (response.status === 200) {
-          const newItems = response.data.event_items;
+          const newItems = response.data.items;
           this.setState({
             event_id: event_id,
             items: newItems,
@@ -96,8 +96,10 @@ class Register extends Component {
       items: this.postItems
     };
     const response = await instance.post(url, data).catch(error => console.error(error));
+    console.dir(response);
+    if (response === undefined || response === null) return;
     this.setState({
-      items: response.data.event_items,
+      items: response.data.items,
       open: false,
       disablePaymentButton: true
     });
