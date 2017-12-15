@@ -45,6 +45,7 @@ export const withNavigationBar = InnerComponent => {
         redirectToSignin: false,
         redirectToCreateEvent: false,
         redirectToAccountDashboard: false,
+        redirectToDashboard: false,
         accountMenuAnchorEl: null
       };
     }
@@ -54,6 +55,7 @@ export const withNavigationBar = InnerComponent => {
         redirectToSignin: false,
         redirectToCreateEvent: false,
         redirectToAccountDashboard: false,
+        redirectToDashboard: false,
         accountMenuAnchorEl: null
       });
       this.getEvents();
@@ -107,7 +109,7 @@ export const withNavigationBar = InnerComponent => {
     }
 
     handleGoBack = () => {
-      this.props.history.goBack();
+      this.setState({redirectToDashboard: true});
     }
 
     handleRequestCloseDrawer = () => {
@@ -156,6 +158,8 @@ export const withNavigationBar = InnerComponent => {
         return <Redirect to="/create_event" />;
       } else if (this.state.redirectToAccountDashboard && this.props.location.pathname !== "/account") {
         return <Redirect to="/account" />
+      } else if (this.state.redirectToDashboard) {
+        return <Redirect to="/" />
       } else {
         return (
           <div>
