@@ -98,6 +98,10 @@ export const withNavigationBar = InnerComponent => {
       this.setState({openDrawer: true});
     }
 
+    handleGoBack = () => {
+      this.props.history.goBack();
+    }
+
     handleRequestCloseDrawer = () => {
       this.setState({openDrawer: false});
     }
@@ -138,7 +142,9 @@ export const withNavigationBar = InnerComponent => {
                 title={this.state.title}
                 handleSignOut={this.handleSignOut}
                 handleOpenDrawer={this.handleOpenDrawer}
+                handleGoBack={this.handleGoBack}
                 authorized={true}
+                goBack={this.props.location.pathname!=="/"}
               />
             </header>
             <div style={styles.content}>
