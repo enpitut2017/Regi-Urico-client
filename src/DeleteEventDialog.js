@@ -34,7 +34,7 @@ const DeleteEventDialog = (props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onRequestClose}>{CANCEL}</Button>
-        <Button color='accent' onClick={props.handleDelete(props.event)}>{DELETE}</Button>
+        <Button color='accent' onClick={props.handleDelete}>{DELETE}</Button>
       </DialogActions>
     </Dialog>
   );
