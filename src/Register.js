@@ -67,7 +67,7 @@ class Register extends Component {
         id,
         count: -diffCount
       };
-    });
+    }).filter(item => item.count !== 0);
 
     const sumPrice = Object.keys(eventItems).map(value => {
       const price = Number(eventItems[value].props.price);
