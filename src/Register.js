@@ -61,7 +61,7 @@ class Register extends Component {
 
     this.postItems = Object.keys(eventItems).map(value => {
       const eventItem = eventItems[value];
-      const id        = eventItem.props.id;
+      const id        = eventItem.props.item_id;
       const diffCount = eventItem.state.diffCount;
       return {
         id,
