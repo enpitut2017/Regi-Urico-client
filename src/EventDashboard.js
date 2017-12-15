@@ -77,7 +77,7 @@ class EventDashboard extends Component {
     };
 
     instance
-      .delete(url, event)
+      .delete(url, {data: event})
       .then(response => {
         this.state.changeEventForEventDashboard(response.id);
         this.setState({
