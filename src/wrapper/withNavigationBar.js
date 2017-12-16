@@ -125,7 +125,7 @@ export const withNavigationBar = InnerComponent => {
       const newTitle = this.state.events.find(event =>
         event.id === event_id
       ).name;
-      this.setState({event_id: event_id, title: newTitle});
+      this.setState({event_id: event_id, title: newTitle, openDrawer: false});
       localStorage.event_id = event_id;
     }
 
