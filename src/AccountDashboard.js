@@ -210,7 +210,7 @@ class AccountDashboard extends Component {
       return (
         <div>
           <Grid container justify='center'>
-            <Grid item xs={12} md={4} style={styles.gridStyle}>
+            <Grid item xs={12} sm={11} md={8} lg={6} xl={4} style={styles.gridStyle}>
               <Paper>
                 <Grid container justify='center'>
                   <Grid item xs={10} style={styles.iconColor}>
