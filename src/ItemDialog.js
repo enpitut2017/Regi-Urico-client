@@ -36,7 +36,7 @@ class ItemDialog extends Component {
             name='price'
             label={ITEM_PRICE}
             value={this.props.item.price}
-            onChange={e => this.props.handleChange('price', parseInt(e.target.value))}
+            onChange={e => this.props.handleChange('price', parseInt(e.target.value, 10))}
             type='number'
             style={styles.marginTop30}
             fullWidth
@@ -45,7 +45,7 @@ class ItemDialog extends Component {
             name='count'
             label={ITEM_COUNT}
             value={this.props.item.count}
-            onChange={e => this.props.handleChange('count', parseInt(e.target.value))}
+            onChange={e => this.props.handleChange('count', parseInt(e.target.value, 10))}
             type='number'
             style={styles.marginTop30}
             fullWidth
