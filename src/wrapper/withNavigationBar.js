@@ -127,6 +127,10 @@ export const withNavigationBar = InnerComponent => {
       localStorage.event_id = event_id;
     }
 
+    handleClickNewEvent = () => {
+      this.setState({redirectToCreateEvent: true});
+    }
+
     handleRequestCloseDialog = () => {
       this.setState({openDialog: false});
     }
@@ -204,6 +208,7 @@ export const withNavigationBar = InnerComponent => {
               events={this.state.events}
               open={this.state.openDrawer}
               onClick={this.handleClickEventItem}
+              onClickNewEvent={this.handleClickNewEvent}
               onRequestClose={this.handleRequestCloseDrawer}
             />
             <SimpleDialog

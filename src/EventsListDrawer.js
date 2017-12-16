@@ -1,5 +1,7 @@
-import { Drawer, List, ListItem, ListItemText } from 'material-ui';
+import { Divider, Drawer, List, ListItem, ListItemText } from 'material-ui';
 import React from 'react';
+
+import { CREATE_EVENT } from './const/const-values';
 
 const styles = {
   eventsList: {
@@ -36,6 +38,13 @@ const EventsListDrawer = props => {
         <div style={styles.eventsList}>
           <List>
             {events}
+            <Divider />
+            <ListItem
+              button
+              onClick={props.onClickNewEvent}
+            >
+              <ListItemText primary={CREATE_EVENT} />
+            </ListItem>
           </List>
         </div>
       </div>
