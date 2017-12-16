@@ -116,6 +116,7 @@ class ItemsDashboard extends Component {
   }
 
   handleChange = (target, value) => {
+    if (Number.isNaN(value)) return;
     const newState = {};
     newState[target] = value;
     this.setState({
