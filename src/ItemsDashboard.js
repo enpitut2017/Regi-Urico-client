@@ -73,8 +73,8 @@ class ItemsDashboard extends Component {
 
   editItem = itemId => () => {
     const item = this.state.items.find(item => {
-      return item.item_id === itemId;
-    })
+      return item.id === itemId;
+    });
     this.setState({
       editItem: Object.assign({}, this.state.editItem, item),
       itemDialog: true
@@ -95,7 +95,7 @@ class ItemsDashboard extends Component {
 
   deleteItem = itemId => () => {
     const item = this.state.items.find(item => {
-      return item.item_id === itemId;
+      return item.id === itemId;
     });
     this.setState({
       deleteItem: Object.assign({}, this.state.deleteItem, item),
@@ -129,24 +129,27 @@ class ItemsDashboard extends Component {
     const url = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const data = this.state.editItem;
     data['event_id'] = this.props.event_id;
-    const response = data.item_id ? await instance.patch(url, data) : await instance.post(url, data)
+    data['item_id'] = data.id;
+    const response = data.id ? await instance.patch(url, data) : await instance.post(url, data);
     if (response === undefined || response === null) return;
     this.setState({
-      items: response.data.items
+      items: response.data.items,
+      itemDialog: false,
     });
   }
 
-  execDelete = item => async () => {
+  onClickDelete = item => async () => {
     const instance = createXHRInstance();
-    const deleteUrl = `${BASE_URI}${EVENT_ITEMS_URI}`;
-    const deleteData = {
+    const url = `${BASE_URI}${EVENT_ITEMS_URI}`;
+    const data = {
       event_id: this.props.event_id,
-      item_id: item.item_id
+      item_id: item.id,
     };
-    const response = await instance.delete(deleteUrl, {data: deleteData}).catch(e => e);
+    const response = await instance.delete(url, {data: data}).catch(e => e);
     if (response === undefined || response === null) return;
     this.setState({
-      items: response.data.items
+      items: response.data.items,
+      deleteDialog: false,
     });
   }
 
@@ -171,7 +174,8 @@ class ItemsDashboard extends Component {
         </Grid>
         <ItemDialog
           onRequestClose={this.onRequestItemDialogClose}
-          open={this.state.itemDialog} item={this.state.editItem}
+          open={this.state.itemDialog}
+          item={this.state.editItem}
           handleChange={this.handleChange}
           onClickSave={this.onClickSave}
         />
@@ -179,7 +183,7 @@ class ItemsDashboard extends Component {
           onRequestClose={this.onRequestDeleteDialogClose}
           open={this.state.deleteDialog}
           item={this.state.deleteItem}
-          handleDelete={this.execDelete}
+          onClickDelete={this.onClickDelete}
         />
       </div>
     );
