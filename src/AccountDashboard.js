@@ -51,8 +51,9 @@ const styles = {
 class AccountDashboard extends Component {
   constructor(props) {
     super(props);
+    const name = localStorage.getItem('name') || '';
     this.state = {
-      name: '',
+      name: name,
       password: '',
       confirmDelete: '',
       redirectToRoot: false,
@@ -105,6 +106,7 @@ class AccountDashboard extends Component {
       .then(response => {
         if (response.status == 200) {
           // success to patch
+          localStorage.setItem('name', response.data.name);
           this.setState({
             name: response.data.name,
             openSnackbar: true,
