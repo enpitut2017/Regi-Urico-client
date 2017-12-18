@@ -1,4 +1,3 @@
-import { Redirect } from 'react-router-dom';
 import React, { Component } from 'react';
 
 import { BASE_URI, EVENTS_URI, REGISTER_URI } from './const/urls';
@@ -15,6 +14,7 @@ import EventItemsList from './EventItemsList.js';
 import FeedbackSnackbar from './FeedbackSnackbar';
 import PaymentButton from './PaymentButton.js';
 import PaymentDialog from './PaymentDialog';
+import RedirectOnce from './RedirectOnce';
 
 class Register extends Component {
   constructor(props) {
@@ -203,9 +203,9 @@ class Register extends Component {
   }
 
   render() {
-    if (this.state.redirectToRoot) return <Redirect to="/" />;
     return (
       <div>
+        <RedirectOnce to="/" if={this.state.redirectToRoot} />
         <EventItemsList
           items={this.state.items}
           onDiffCountChange={this.updateDisablePaymentButton}

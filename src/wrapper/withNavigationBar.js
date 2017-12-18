@@ -1,4 +1,3 @@
-import { Redirect } from 'react-router-dom';
 import React, {Component} from 'react';
 import axios from 'axios';
 
@@ -19,6 +18,7 @@ import { createXHRInstance } from '../worker-service/axiosService';
 import EventsListDrawer from '../EventsListDrawer';
 import FeedbackSnackbar from '../FeedbackSnackbar';
 import NavigationBar from '../NavigationBar';
+import RedirectOnce from '../RedirectOnce';
 import SimpleDialog from '../SimpleDialog';
 
 const styles = {
@@ -238,58 +238,53 @@ export const withNavigationBar = InnerComponent => {
         renameEventNameForEventDashboard: this.renameEventNameForEventDashboard,
         changeEventForEventDashboard: this.handleClickEventItem
       };
-      if (this.state.redirectToSignin) {
-        return <Redirect to="/signin" />;
-      } else if (this.state.redirectToCreateEvent) {
-        return <Redirect to="/create_event" />;
-      } else if (this.state.redirectToAccountDashboard && this.props.location.pathname !== "/account") {
-        return <Redirect to="/account" />
-      } else if (this.state.redirectToDashboard) {
-        return <Redirect to="/" />
-      } else {
-        return (
-          <div>
-            <header>
-              <NavigationBar
-                title={this.state.title}
-                handleSignOut={this.handleSignOut}
-                handleOpenDrawer={this.handleOpenDrawer}
-                handleOpenAccountMenu={this.handleOpenAccountMenu}
-                handleChangeAccountInfoClick={this.handleChangeAccountInfoClick}
-                handleRequestClose={this.handleRequestClose}
-                anchorEl={this.state.accountMenuAnchorEl}
-                handleGoBack={this.handleGoBack}
-                authorized={true}
-                goBack={this.props.location.pathname!=="/"}
-              />
-            </header>
-            <div style={styles.content}>
-              <InnerComponent {...this.props} {...provideProps}/>
-            </div>
-            <EventsListDrawer
-              events={this.state.events}
-              open={this.state.openDrawer}
-              onClick={this.handleClickEventItem}
-              onClickNewEvent={this.handleClickNewEvent}
-              onRequestClose={this.handleRequestCloseDrawer}
+      return (
+        <div>
+          <RedirectOnce to="/signin" if={this.state.redirectToSignin} />
+          <RedirectOnce to="/create_event" if={this.state.redirectToCreateEvent} />
+          <RedirectOnce to="/account" if={this.state.redirectToAccountDashboard} />
+          <RedirectOnce to="/" if={this.state.redirectToDashboard} />
+          <header>
+            <NavigationBar
+              title={this.state.title}
+              handleSignOut={this.handleSignOut}
+              handleOpenDrawer={this.handleOpenDrawer}
+              handleOpenAccountMenu={this.handleOpenAccountMenu}
+              handleChangeAccountInfoClick={this.handleChangeAccountInfoClick}
+              handleSignOut={this.handleSignOut}
+              handleRequestClose={this.handleRequestClose}
+              anchorEl={this.state.accountMenuAnchorEl}
+              handleGoBack={this.handleGoBack}
+              authorized={true}
+              goBack={this.props.location.pathname!=="/"}
             />
-            <SimpleDialog
-              ok={LOGOUT}
-              title={CONFIRM_LOGOUT}
-              text={CONFIRM_LOGOUT_TEXT}
-              open={this.state.openDialog}
-              onRequestClose={this.handleRequestCloseDialog}
-              onOK={this.handleOKDialog}
-              onCancel={this.handleRequestCloseDialog}
-            />
-            <FeedbackSnackbar
-              open={this.state.openSnackbar}
-              onRequestClose={this.handleRequestCloseSnackbar}
-              messages={this.state.messages}
-            />
+          </header>
+          <div style={styles.content}>
+            <InnerComponent {...this.props} {...provideProps}/>
           </div>
-        );
-      }
+          <EventsListDrawer
+            events={this.state.events}
+            open={this.state.openDrawer}
+            onClick={this.handleClickEventItem}
+            onClickNewEvent={this.handleClickNewEvent}
+            onRequestClose={this.handleRequestCloseDrawer}
+          />
+          <SimpleDialog
+            ok={LOGOUT}
+            title={CONFIRM_LOGOUT}
+            text={CONFIRM_LOGOUT_TEXT}
+            open={this.state.openDialog}
+            onRequestClose={this.handleRequestCloseDialog}
+            onOK={this.handleOKDialog}
+            onCancel={this.handleRequestCloseDialog}
+          />
+          <FeedbackSnackbar
+            open={this.state.openSnackbar}
+            onRequestClose={this.handleRequestCloseSnackbar}
+            messages={this.state.messages}
+          />
+        </div>
+      );
     }
   }
 }

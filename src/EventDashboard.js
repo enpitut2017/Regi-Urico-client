@@ -1,4 +1,3 @@
-import { Redirect } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import Card, { CardContent, CardActions } from 'material-ui/Card';
 import DeleteIcon from 'material-ui-icons/Delete';
@@ -20,6 +19,7 @@ import { withNavigationBar } from './wrapper/withNavigationBar';
 import DeleteEventDialog from './DeleteEventDialog';
 import EventDialog from './EventDialog';
 import FeedbackSnackbar from './FeedbackSnackbar';
+import RedirectOnce from './RedirectOnce';
 
 class EventDashboard extends Component {
   constructor(props) {
@@ -139,9 +139,9 @@ class EventDashboard extends Component {
   }
 
   render() {
-    if (this.state.redirectToRoot) return <Redirect to="/" />;
     return(
       <div>
+        <RedirectOnce to="/" if={this.state.redirectToRoot} />
         <Grid container justify='center'>
           <Grid item xs={10}>
             <Paper>

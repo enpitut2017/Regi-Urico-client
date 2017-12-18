@@ -1,4 +1,3 @@
-import { Redirect } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
@@ -18,6 +17,7 @@ import {
   SIGNIN_FATAL_ERROR,
 } from './const/const-values';
 import { BASE_URI, SIGNIN_URI } from './const/urls';
+import RedirectOnce from './RedirectOnce';
 import { buildErrorMessage } from './worker-service/errorMessageService';
 import FeedbackSnackbar from './FeedbackSnackbar';
 
@@ -133,13 +133,10 @@ class LoginForm extends Component {
   }
 
   render = () => {
-    if (this.state.redirectToDashboard) {
-      return (<Redirect to={"/"} />);
-    } else if (this.state.redirectToSignUp) {
-      return (<Redirect to={"/signup"} />);
-    }
     return (
       <div>
+        <RedirectOnce to={"/"} if={this.state.redirectToDashboard} />
+        <RedirectOnce to={"/signup"} if={this.state.redirectToSignUp} />
         <Grid container spacing={24} justify="center">
           <Grid item xs={8} style={styles.serviceName}>
             <Typography type="display1" gutterBottom align="center" color="secondary">

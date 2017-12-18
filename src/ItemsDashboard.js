@@ -1,4 +1,3 @@
-import { Redirect } from 'react-router-dom';
 import AddIcon from 'material-ui-icons/Add'
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
@@ -20,6 +19,7 @@ import DeleteDialog from './DeleteDialog';
 import EditableEventItemsList from './EditableEventItemsList.js';
 import FeedbackSnackbar from './FeedbackSnackbar';
 import ItemDialog from './ItemDialog';
+import RedirectOnce from './RedirectOnce';
 
 const styles = {
   marginTop15: {
@@ -293,9 +293,9 @@ class ItemsDashboard extends Component {
   }
 
   render() {
-    if (this.state.redirectToRoot) return <Redirect to="/" />
     return (
       <div>
+        <RedirectOnce to="/" if={this.state.redirectToRoot} />
         <Grid container>
           <Grid item xs={1}></Grid>
           <Grid item xs={10}>
