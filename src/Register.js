@@ -182,7 +182,7 @@ class Register extends Component {
 
   updateDisablePaymentButton = (itemId, newDiffCount) => {
     const eventItems = this.state.items.map(item => {
-      if (item.item_id === itemId) item.diff_count = newDiffCount
+      if (item.id === itemId) item.diff_count = newDiffCount
       return item;
     });
     if (eventItems.every(object => object.diff_count === 0)) {

@@ -87,6 +87,7 @@ class LoginForm extends Component {
       })
       .then(response => {
         if (response !== undefined && response !== null && response.status === 200) {
+          localStorage.setItem('name', response.data.name);
           localStorage.setItem('authorizedToken', response.data.token);
           this.setState({redirectToDashboard: true});
         } else {

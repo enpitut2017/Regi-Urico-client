@@ -33,7 +33,7 @@ class EventDashboard extends Component {
       deleteDialog: false,
       openSnackbar: false,
       messages: [],
-      redirectToRoot: true,
+      redirectToRoot: false,
     }
   }
 
@@ -87,9 +87,11 @@ class EventDashboard extends Component {
     instance
       .delete(url, {data: event})
       .then(response => {
-        this.state.changeEventForEventDashboard(response.id);
+        if (response.status === 204) return; // Eventsが空
+        this.props.changeEventForEventDashboard(response.data.id);
         this.setState({
-          deleteDialog: false
+          deleteDialog: false,
+          redirectToRoot: true
         });
       })
       .catch(error => {

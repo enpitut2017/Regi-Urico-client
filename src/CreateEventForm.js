@@ -17,6 +17,8 @@ import {
 import { buildErrorMessage } from './worker-service/errorMessageService';
 import { createXHRInstance } from './worker-service/axiosService';
 import FeedbackSnackbar from './FeedbackSnackbar';
+import { withAuthorization } from './wrapper/withAuthorization';
+import { withNavigationBar } from './wrapper/withNavigationBar';
 
 const styles = {
   gridPaper: {
@@ -33,7 +35,7 @@ const styles = {
   }
 };
 
-export default class CreateEventForm extends Component {
+class CreateEventForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -152,3 +154,5 @@ export default class CreateEventForm extends Component {
     );
   }
 }
+
+export default withAuthorization(withNavigationBar(CreateEventForm));

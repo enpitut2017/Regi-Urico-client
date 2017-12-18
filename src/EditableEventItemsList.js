@@ -7,13 +7,13 @@ class EditableEventItemsList extends Component{
       return (
         <EditableEventItem
           key={index}
-          item_id={item.item_id}
+          item_id={item.id}
           name={item.name}
           price={item.price}
           count={item.count}
           handleDeleteClick={this.props.handleDeleteClick}
           handleEditClick={this.props.handleEditClick}
-          ref={`EditableEventItem-${item.item_id}`}
+          ref={`EditableEventItem-${item.id}`}
         />
       );
     });

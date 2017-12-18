@@ -36,7 +36,7 @@ const DeleteDialog = (props) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onRequestClose}>{CANCEL}</Button>
-        <Button color='accent' onClick={props.handleDelete(props.item)}>{DELETE}</Button>
+        <Button color='accent' onClick={props.onClickDelete(props.item)}>{DELETE}</Button>
       </DialogActions>
     </Dialog>
   );

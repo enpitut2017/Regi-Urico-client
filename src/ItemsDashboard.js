@@ -117,8 +117,8 @@ class ItemsDashboard extends Component {
 
   editItem = itemId => () => {
     const item = this.state.items.find(item => {
-      return item.item_id === itemId;
-    })
+      return item.id === itemId;
+    });
     this.setState({
       editItem: Object.assign({}, this.state.editItem, item),
       itemDialog: true
@@ -139,7 +139,7 @@ class ItemsDashboard extends Component {
 
   deleteItem = itemId => () => {
     const item = this.state.items.find(item => {
-      return item.item_id === itemId;
+      return item.id === itemId;
     });
     this.setState({
       deleteItem: Object.assign({}, this.state.deleteItem, item),
@@ -160,6 +160,7 @@ class ItemsDashboard extends Component {
   }
 
   handleChange = (target, value) => {
+    if (Number.isNaN(value)) return;
     const newState = {};
     newState[target] = value;
     this.setState({
@@ -172,7 +173,8 @@ class ItemsDashboard extends Component {
     const url = `${BASE_URI}${EVENT_ITEMS_URI}`;
     const data = this.state.editItem;
     data['event_id'] = this.props.event_id;
-    if (data.item_id) {
+    data['item_id'] = data.id;
+    if (data.id) {
       const response = await instance.patch(url, data).catch(error => {
         if (error.response === undefined) {
           this.setState({
@@ -186,7 +188,8 @@ class ItemsDashboard extends Component {
         } else if (error.response.status === 404) {
           // EventItem Not Found
           this.setState({
-            items: error.response.data.items
+            items: error.response.data.items,
+            itemDialog: false
           });
         } else {
           // Undefined Fatal Error
@@ -199,7 +202,8 @@ class ItemsDashboard extends Component {
       if (response === undefined || response === null) return;
       // Success to Patch
       this.setState({
-        items: response.data.items
+        items: response.data.items,
+        itemDialog: false
       });
     } else {
       const response = await instance.post(url, data).catch(error => {
@@ -223,7 +227,8 @@ class ItemsDashboard extends Component {
           // client側のitemテーブルが間違っている可能性があるので
           // サーバ側がitemテーブルを送り直してくる。
           this.setState({
-            items: error.response.data.items
+            items: error.response.data.items,
+            itemDialog: false
           });
         } else {
           // Undefined Fatal Error
@@ -236,19 +241,20 @@ class ItemsDashboard extends Component {
       if (response === undefined || response === null) return;
       // Success to post
       this.setState({
-        items: response.data.items
+        items: response.data.items,
+        itemDialog: false
       });
     }
   }
 
-  execDelete = item => async () => {
+  onClickDelete = item => async () => {
     const instance = createXHRInstance();
-    const deleteUrl = `${BASE_URI}${EVENT_ITEMS_URI}`;
-    const deleteData = {
+    const url = `${BASE_URI}${EVENT_ITEMS_URI}`;
+    const data = {
       event_id: this.props.event_id,
-      item_id: item.id
+      item_id: item.id,
     };
-    const response = await instance.delete(deleteUrl, {data: deleteData}).catch(error => {
+    const response = await instance.delete(url, {data: data}).catch(error => {
       if (error.response === undefined) {
         this.setState({
           openSnackbar: true,
@@ -263,7 +269,8 @@ class ItemsDashboard extends Component {
         // client側のitemテーブルが間違っている可能性があるので
         // サーバ側がitemテーブルを送り直してくる。
         this.setState({
-          items: error.response.data.items
+          items: error.response.data.items,
+          deleteDialog: false
         });
       } else {
         // Undefined Fatal Error
@@ -276,7 +283,8 @@ class ItemsDashboard extends Component {
     if (response === undefined || response === null) return;
     // Success to delete
     this.setState({
-      items: response.data.items
+      items: response.data.items,
+      deleteDialog: false,
     });
   }
 
@@ -306,7 +314,8 @@ class ItemsDashboard extends Component {
         </Grid>
         <ItemDialog
           onRequestClose={this.onRequestItemDialogClose}
-          open={this.state.itemDialog} item={this.state.editItem}
+          open={this.state.itemDialog}
+          item={this.state.editItem}
           handleChange={this.handleChange}
           onClickSave={this.onClickSave}
         />
@@ -314,7 +323,7 @@ class ItemsDashboard extends Component {
           onRequestClose={this.onRequestDeleteDialogClose}
           open={this.state.deleteDialog}
           item={this.state.deleteItem}
-          handleDelete={this.execDelete}
+          onClickDelete={this.onClickDelete}
         />
         <FeedbackSnackbar
           open={this.state.openSnackbar}

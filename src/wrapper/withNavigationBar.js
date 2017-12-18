@@ -12,6 +12,9 @@ import {
   PATCH_EVENT_FATAL_ERROR,
 } from '../const/const-values';
 import { buildErrorMessage } from '../worker-service/errorMessageService';
+import {
+  addReloadNotification,
+} from '../worker-service/reloadNotificationService';
 import { createXHRInstance } from '../worker-service/axiosService';
 import EventsListDrawer from '../EventsListDrawer';
 import FeedbackSnackbar from '../FeedbackSnackbar';
@@ -35,6 +38,7 @@ export const withNavigationBar = InnerComponent => {
     constructor(props) {
       super(props);
       this.state = this.getInitialState();
+      addReloadNotification();
     }
 
     getInitialState = () => {
@@ -49,7 +53,9 @@ export const withNavigationBar = InnerComponent => {
         redirectToAccountDashboard: false,
         accountMenuAnchorEl: null,
         openSnackbar: false,
-        messages: []
+        messages: [],
+        redirectToDashboard: false,
+        accountMenuAnchorEl: null
       };
     }
 
@@ -58,6 +64,7 @@ export const withNavigationBar = InnerComponent => {
         redirectToSignin: false,
         redirectToCreateEvent: false,
         redirectToAccountDashboard: false,
+        redirectToDashboard: false,
         accountMenuAnchorEl: null
       });
       this.getEvents();
@@ -136,7 +143,7 @@ export const withNavigationBar = InnerComponent => {
     }
 
     handleGoBack = () => {
-      this.props.history.goBack();
+      this.setState({redirectToDashboard: true});
     }
 
     handleRequestCloseDrawer = () => {
@@ -147,8 +154,12 @@ export const withNavigationBar = InnerComponent => {
       const newTitle = this.state.events.find(event =>
         event.id === event_id
       ).name;
-      this.setState({event_id: event_id, title: newTitle});
+      this.setState({event_id: event_id, title: newTitle, openDrawer: false});
       localStorage.event_id = event_id;
+    }
+
+    handleClickNewEvent = () => {
+      this.setState({redirectToCreateEvent: true});
     }
 
     handleRequestCloseDialog = () => {
@@ -233,6 +244,8 @@ export const withNavigationBar = InnerComponent => {
         return <Redirect to="/create_event" />;
       } else if (this.state.redirectToAccountDashboard && this.props.location.pathname !== "/account") {
         return <Redirect to="/account" />
+      } else if (this.state.redirectToDashboard) {
+        return <Redirect to="/" />
       } else {
         return (
           <div>
@@ -257,6 +270,7 @@ export const withNavigationBar = InnerComponent => {
               events={this.state.events}
               open={this.state.openDrawer}
               onClick={this.handleClickEventItem}
+              onClickNewEvent={this.handleClickNewEvent}
               onRequestClose={this.handleRequestCloseDrawer}
             />
             <SimpleDialog

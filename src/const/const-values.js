@@ -44,6 +44,7 @@ export const PAYMENT = `お支払`;
 export const PLUS = `+`;
 export const POST_EVENTITEM_FATAL_ERROR = `アイテム追加に失敗しました`;
 export const REGI = `レジ`;
+export const RELOAD_NOTIFICATION = `ページを移動・リロードすると、現在の操作は失われます。本当によろしいですか？`;
 export const SAVE = `保存`;
 export const SERVICE_NAME = `Regi-Urico`;
 export const SUBTOTAL = `小計`;

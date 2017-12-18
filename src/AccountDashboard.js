@@ -47,8 +47,9 @@ const styles = {
 class AccountDashboard extends Component {
   constructor(props) {
     super(props);
+    const name = localStorage.getItem('name') || '';
     this.state = {
-      name: '',
+      name: name,
       password: '',
       confirmDelete: '',
       redirectToRoot: false,
@@ -101,6 +102,7 @@ class AccountDashboard extends Component {
       .then(response => {
         if (response.status == 200) {
           // success to patch
+          localStorage.setItem('name', response.data.name);
           this.setState({
             name: response.data.name,
             openSnackbar: true,
@@ -198,7 +200,7 @@ class AccountDashboard extends Component {
       return (
         <div>
           <Grid container justify='center'>
-            <Grid item xs={12} md={4} style={styles.gridStyle}>
+            <Grid item xs={12} sm={11} md={8} lg={6} xl={4} style={styles.gridStyle}>
               <Paper>
                 <Grid container justify='center'>
                   <Grid item xs={10} style={styles.iconColor}>
