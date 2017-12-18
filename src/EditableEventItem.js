@@ -16,7 +16,7 @@ const styles = {
   }
 };
 
-class EventItem extends Component{
+class EditableEventItem extends Component{
   render() {
     return (
       <Card className="EventItem" style={styles.marginTop15} >
@@ -42,4 +42,4 @@ class EventItem extends Component{
   }
 }
 
-export default EventItem;
+export default EditableEventItem;
