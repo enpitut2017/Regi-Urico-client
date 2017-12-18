@@ -1,4 +1,4 @@
-import { AppBar, Button, IconButton, Menu, MenuItem, Toolbar, Typography } from 'material-ui';
+import { AppBar, IconButton, Menu, MenuItem, Toolbar, Typography } from 'material-ui';
 import MenuIcon from 'material-ui-icons/Menu';
 import AccountCircle from 'material-ui-icons/AccountCircle';
 import GoBackIcon from 'material-ui-icons/KeyboardBackspace';
@@ -6,7 +6,6 @@ import React from 'react';
 
 import {
   CHANGE_ACCOUNT_INFO,
-  DELETE_ACCOUNT,
   LOGOUT
 } from './const/const-values';
 

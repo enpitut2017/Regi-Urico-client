@@ -3,7 +3,6 @@ import Dialog, { DialogTitle, DialogContent, DialogActions } from 'material-ui/D
 import Button from 'material-ui/Button';
 import { TextField } from 'material-ui';
 import { EVENT_NAME, CANCEL, SAVE } from './const/const-values';
-import { NullOrEmpty } from './worker-service/formService';
 
 const styles = {
   center: {

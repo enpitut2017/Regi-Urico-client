@@ -55,7 +55,6 @@ export const withNavigationBar = InnerComponent => {
         openSnackbar: false,
         messages: [],
         redirectToDashboard: false,
-        accountMenuAnchorEl: null
       };
     }
 
