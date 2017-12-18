@@ -181,7 +181,7 @@ export const withNavigationBar = InnerComponent => {
       };
       if (this.state.redirectToSignin) {
         return <Redirect to="/signin" />;
-      } else if (this.state.redirectToCreateEvent) {
+      } else if (this.state.redirectToCreateEvent && this.props.location.pathname !== "/create_event") {
         return <Redirect to="/create_event" />;
       } else if (this.state.redirectToAccountDashboard && this.props.location.pathname !== "/account") {
         return <Redirect to="/account" />
