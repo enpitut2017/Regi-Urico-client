@@ -11,7 +11,7 @@ import React from 'react';
  * @provide bool   props.if リダイレクトするならばtrue, しないならばfalse
  */
 const RedirectOnce = props => {
-  if (props.to === props.location || !props.if) {
+  if (props.to === props.location.pathname || !props.if) {
     return <div />;
   } else {
     return <Redirect to={props.to} />;
