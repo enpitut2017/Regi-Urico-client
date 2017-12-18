@@ -87,12 +87,24 @@ class EventDashboard extends Component {
     instance
       .delete(url, {data: event})
       .then(response => {
-        if (response.status === 204) return; // Eventsが空
-        this.props.changeEventForEventDashboard(response.data.id);
-        this.setState({
-          deleteDialog: false,
-          redirectToRoot: true
-        });
+        if (response.status === 204) {
+          this.setState({
+            deleteDialog: false,
+            redirectToRoot: true
+          });
+        } else if (response.status === 200) {
+          this.props.changeEventForEventDashboard(response.data.id);
+          this.setState({
+            deleteDialog: false,
+            redirectToRoot: true
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [DELETE_EVENT_FATAL_ERROR]
+          });
+        }
       })
       .catch(error => {
         if (error.response === undefined) {
