@@ -1,4 +1,3 @@
-import { Avatar } from 'material-ui';
 import { Redirect } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
@@ -12,11 +11,15 @@ import {
   ACCOUNT_NAME,
   CREATE_ACCOUNT,
   LOGIN,
+  NETWORK_REACH_ERROR,
   NOT_HAVE_ACCOUNT,
   PASSWORD,
   SERVICE_NAME,
+  SIGNIN_FATAL_ERROR,
 } from './const/const-values';
 import { BASE_URI, SIGNIN_URI } from './const/urls';
+import { buildErrorMessage } from './worker-service/errorMessageService';
+import FeedbackSnackbar from './FeedbackSnackbar';
 
 const styles = {
   gridPaper: {
@@ -49,6 +52,8 @@ class LoginForm extends Component {
       confirmPassword: '',
       redirectToSignUp: false,
       redirectToDashboard: false,
+      openSnackbar: false,
+      messages: []
     }
   }
 
@@ -81,15 +86,37 @@ class LoginForm extends Component {
         password: this.state.password
       })
       .then(response => {
-        if (response.errors == null) {
+        if (response !== undefined && response !== null && response.status === 200) {
           localStorage.setItem('name', response.data.name);
           localStorage.setItem('authorizedToken', response.data.token);
           this.setState({redirectToDashboard: true});
         } else {
-          // Server rejected or server error
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [SIGNIN_FATAL_ERROR]
+          });
         }})
       .catch(error => {
-        // Not reach to Server
+        if (error.response === undefined) {
+          // Not reach to Server
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [SIGNIN_FATAL_ERROR]
+          });
+        }
         console.error(error);
       });
   };
@@ -101,6 +128,10 @@ class LoginForm extends Component {
     );
   };
 
+  handleRequestClose = () => {
+    this.setState({openSnackbar: false});
+  }
+
   render = () => {
     if (this.state.redirectToDashboard) {
       return (<Redirect to={"/"} />);
@@ -108,63 +139,70 @@ class LoginForm extends Component {
       return (<Redirect to={"/signup"} />);
     }
     return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={8} style={styles.serviceName}>
-          <Typography type="display1" gutterBottom align="center" color="secondary">
-            {SERVICE_NAME}
-          </Typography>
+      <div>
+        <Grid container spacing={24} justify="center">
+          <Grid item xs={8} style={styles.serviceName}>
+            <Typography type="display1" gutterBottom align="center" color="secondary">
+              {SERVICE_NAME}
+            </Typography>
+          </Grid>
+          <Grid item xs={10} md={6} style={styles.gridPaper}>
+            <Paper style={styles.paper}>
+              <Grid container spacing={24} justify="center">
+                <Grid item xs={8} sm={4} md={4}>
+                  <TextField
+                    id="name"
+                    name="name"
+                    label={ACCOUNT_NAME}
+                    className="TextField"
+                    margin="normal"
+                    fullWidth
+                    value={this.state.name}
+                    onChange={this.handleChange}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={24} justify="center">
+                <Grid item xs={8} sm={4} md={4}>
+                  <TextField
+                    id="password"
+                    name="password"
+                    label={PASSWORD}
+                    className="TextField"
+                    type="password"
+                    margin="normal"
+                    fullWidth
+                    value={this.state.password}
+                    onChange={this.handleChange}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={24} justify="center">
+                <Grid item>
+                  <Button raised color="primary" disabled={this.disableLogin()} onClick={this.handleClickSignin}>
+                     {LOGIN}
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid container spacing={24} justify="center" alignItems="baseline">
+                <Grid item xs={8} sm={4} md={4}>
+                  <Typography type="caption">{NOT_HAVE_ACCOUNT}</Typography>
+                </Grid>
+                <Grid item xs={8} sm={5} md={5}>
+                  <Button color="primary" onClick={this.handleClickSignup}>
+                    {CREATE_ACCOUNT}
+                  </Button>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
         </Grid>
-        <Grid item xs={10} md={6} style={styles.gridPaper}>
-          <Paper style={styles.paper}>
-            <Grid container spacing={24} justify="center">
-              <Grid item xs={8} sm={4} md={4}>
-                <TextField
-                  id="name"
-                  name="name"
-                  label={ACCOUNT_NAME}
-                  className="TextField"
-                  margin="normal"
-                  fullWidth
-                  value={this.state.name}
-                  onChange={this.handleChange}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={24} justify="center">
-              <Grid item xs={8} sm={4} md={4}>
-                <TextField
-                  id="password"
-                  name="password"
-                  label={PASSWORD}
-                  className="TextField"
-                  type="password"
-                  margin="normal"
-                  fullWidth
-                  value={this.state.password}
-                  onChange={this.handleChange}
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={24} justify="center">
-              <Grid item>
-                <Button raised color="primary" disabled={this.disableLogin()} onClick={this.handleClickSignin}>
-                   {LOGIN}
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid container spacing={24} justify="center" alignItems="baseline">
-              <Grid item xs={8} sm={4} md={4}>
-                <Typography type="caption">{NOT_HAVE_ACCOUNT}</Typography>
-              </Grid>
-              <Grid item xs={8} sm={5} md={5}>
-                <Button color="primary" onClick={this.handleClickSignup}>
-                  {CREATE_ACCOUNT}
-                </Button>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-      </Grid>
+        <FeedbackSnackbar
+          open={this.state.openSnackbar}
+          onRequestClose={this.handleRequestClose}
+          messages={this.state.messages}
+        />
+      </div>
     );
   }
 }

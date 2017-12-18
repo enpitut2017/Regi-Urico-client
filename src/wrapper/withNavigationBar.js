@@ -6,13 +6,18 @@ import { BASE_URI, EVENTS_URI } from '../const/urls';
 import {
   CONFIRM_LOGOUT,
   CONFIRM_LOGOUT_TEXT,
-  LOGOUT
+  GET_EVENTS_FATAL_ERROR,
+  LOGOUT,
+  NETWORK_REACH_ERROR,
+  PATCH_EVENT_FATAL_ERROR,
 } from '../const/const-values';
+import { buildErrorMessage } from '../worker-service/errorMessageService';
 import {
   addReloadNotification,
 } from '../worker-service/reloadNotificationService';
 import { createXHRInstance } from '../worker-service/axiosService';
 import EventsListDrawer from '../EventsListDrawer';
+import FeedbackSnackbar from '../FeedbackSnackbar';
 import NavigationBar from '../NavigationBar';
 import SimpleDialog from '../SimpleDialog';
 
@@ -36,10 +41,6 @@ export const withNavigationBar = InnerComponent => {
       addReloadNotification();
     }
 
-    init = () => {
-      // TODO: APIサーバからのEvent一覧の取得
-    }
-
     getInitialState = () => {
       return {
         event_id: 0,
@@ -50,6 +51,9 @@ export const withNavigationBar = InnerComponent => {
         redirectToSignin: false,
         redirectToCreateEvent: false,
         redirectToAccountDashboard: false,
+        accountMenuAnchorEl: null,
+        openSnackbar: false,
+        messages: [],
         redirectToDashboard: false,
         accountMenuAnchorEl: null
       };
@@ -78,28 +82,53 @@ export const withNavigationBar = InnerComponent => {
           headers: {'X-Authorized-Token': token},
         })
         .then(response => {
-          const newEvents = response.data.events;
-          if (newEvents === undefined || newEvents.length <= 0) {
-            this.setState({redirectToCreateEvent: true});
-          } else {
-            const lastUpdateEventId = newEvents[0].id;
-            let newEventId = parseInt(localStorage.event_id, 10);
-            if (Number.isNaN(newEventId) || newEvents.every(event => event.id !== newEventId)) {
-              newEventId = lastUpdateEventId;
+          if (response !== undefined && response !== null && response.status === 200) {
+            const newEvents = response.data.events;
+            if (newEvents === undefined || newEvents.length <= 0) {
+              this.setState({redirectToCreateEvent: true});
+            } else {
+              const lastUpdateEventId = newEvents[0].id;
+              let newEventId = parseInt(localStorage.event_id, 10);
+              if (Number.isNaN(newEventId) || newEvents.every(event => event.id !== newEventId)) {
+                newEventId = lastUpdateEventId;
+              }
+              const newEvent = newEvents.find(event =>
+                event.id === newEventId
+              );
+              const newTitle = newEvent.name;
+              this.setState({
+                events: newEvents,
+                event_id: newEventId,
+                title: newTitle
+              });
+              localStorage.event_id = newEventId;
             }
-            const newEvent = newEvents.find(event =>
-              event.id === newEventId
-            );
-            const newTitle = newEvent.name;
+          } else {
+            // Undefined Fatal Error
             this.setState({
-              events: newEvents,
-              event_id: newEventId,
-              title: newTitle
+              openSnackbar: true,
+              messages: [GET_EVENTS_FATAL_ERROR]
             });
-            localStorage.event_id = newEventId;
           }
         })
         .catch(error => {
+          if (error.response === undefined) {
+            // Not reach to Server
+            this.setState({
+              openSnackbar: true,
+              messages: [NETWORK_REACH_ERROR]
+            });
+          } else if (error.response.status === 401) {
+            // Unauthorized
+            localStorage.removeItem('authorizedToken');
+            this.setState({redirectToSignin: true});
+          } else {
+            // Undefined Fatal Error
+            this.setState({
+              openSnackbar: true,
+              messages: [GET_EVENTS_FATAL_ERROR]
+            });
+          }
           console.error(error);
         });
     }
@@ -152,8 +181,34 @@ export const withNavigationBar = InnerComponent => {
         id: this.state.event_id,
         name: eventName
       };
-      const response = await instance.patch(url, event).catch(error => console.error(error));
+      const response = await instance.patch(url, event).catch(error => {
+        if (error.response === undefined) {
+          // Not reach to Server
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 400) {
+          // Bad request
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          localStorage.removeItem('authorizedToken');
+          this.setState({redirectToSignin: true});
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [PATCH_EVENT_FATAL_ERROR]
+          });
+        }
+        console.error(error);
+      });
       if (response === undefined || response === null) return;
+      // Success to rename
       this.setState({
         event_id: response.data.id,
         title: response.data.name
@@ -170,6 +225,10 @@ export const withNavigationBar = InnerComponent => {
 
     handleRequestClose = () => {
       this.setState({accountMenuAnchorEl: null});
+    }
+
+    handleRequestCloseSnackbar = () => {
+      this.setState({openSnackbar: false});
     }
 
     render() {
@@ -197,7 +256,6 @@ export const withNavigationBar = InnerComponent => {
                 handleOpenDrawer={this.handleOpenDrawer}
                 handleOpenAccountMenu={this.handleOpenAccountMenu}
                 handleChangeAccountInfoClick={this.handleChangeAccountInfoClick}
-                handleSignOut={this.handleSignOut}
                 handleRequestClose={this.handleRequestClose}
                 anchorEl={this.state.accountMenuAnchorEl}
                 handleGoBack={this.handleGoBack}
@@ -223,6 +281,11 @@ export const withNavigationBar = InnerComponent => {
               onRequestClose={this.handleRequestCloseDialog}
               onOK={this.handleOKDialog}
               onCancel={this.handleRequestCloseDialog}
+            />
+            <FeedbackSnackbar
+              open={this.state.openSnackbar}
+              onRequestClose={this.handleRequestCloseSnackbar}
+              messages={this.state.messages}
             />
           </div>
         );

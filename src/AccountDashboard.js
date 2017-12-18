@@ -1,16 +1,10 @@
-import {
-  Button,
-  IconButton,
-  Snackbar,
-  TextField,
-  Typography,
-} from 'material-ui';
+import { Button, TextField, Typography } from 'material-ui';
 import { Redirect } from 'react-router-dom';
 import Card, { CardContent } from 'material-ui/Card';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import React, { Component } from 'react';
-import CloseIcon from 'material-ui-icons/Close';
+
 import {
   ACCOUNT_NAME,
   CHANGE_ACCOUNT_INFO,
@@ -22,9 +16,11 @@ import {
   PASSWORD,
 } from './const/const-values';
 import { BASE_URI, CHANGE_ACCOUNT_URI, DELETE_ACCOUNT_URI } from './const/urls';
+import { buildErrorMessage } from './worker-service/errorMessageService';
 import { createXHRInstance } from './worker-service/axiosService';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
+import FeedbackSnackbar from './FeedbackSnackbar';
 
 const styles = {
   gridStyle: {
@@ -58,7 +54,7 @@ class AccountDashboard extends Component {
       confirmDelete: '',
       redirectToRoot: false,
       openSnackbar: false,
-      message: ''
+      messages: []
     }
   }
 
@@ -110,13 +106,13 @@ class AccountDashboard extends Component {
           this.setState({
             name: response.data.name,
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_SUCCESS
+            messages: [CHANGE_ACCOUNT_SUCCESS]
           });
         } else {
           // Undefined Fatal Error
           this.setState({
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_FATAL_ERROR
+            messages: [CHANGE_ACCOUNT_FATAL_ERROR]
           });
         }})
       .catch(error => {
@@ -124,16 +120,13 @@ class AccountDashboard extends Component {
           // Not reach to Server
           this.setState({
             openSnackbar: true,
-            message: NETWORK_REACH_ERROR
+            messages: [NETWORK_REACH_ERROR]
           });
         } else if (error.response.status === 400) {
           //  bad request
-          let message = Object.keys(error.response.data.errors).map(key => {
-            return (key + ' ' + this[key]);
-          }, error.response.data.errors).join(', ')
           this.setState({
             openSnackbar: true,
-            message: message
+            messages: buildErrorMessage(error.response.data.errors)
           });
         } else if (error.response.status === 401) {
           // Unauthorized
@@ -143,7 +136,7 @@ class AccountDashboard extends Component {
           // Undefined Fatal Error
           this.setState({
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_FATAL_ERROR
+            messages: [CHANGE_ACCOUNT_FATAL_ERROR]
           });
         }
         console.error(error);
@@ -157,7 +150,7 @@ class AccountDashboard extends Component {
         password: this.state.confirmDelete
       }})
       .then(response => {
-        if (response.status == 204) {
+        if (response !== undefined && response !== null && response.status == 204) {
           // success to delete
           localStorage.removeItem('authorizedToken');
           this.setState({redirectToRoot: true});
@@ -165,7 +158,7 @@ class AccountDashboard extends Component {
           // Undefined Fatal Error
           this.setState({
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_FATAL_ERROR
+            messages: [CHANGE_ACCOUNT_FATAL_ERROR]
           });
         }})
       .catch(error => {
@@ -173,18 +166,13 @@ class AccountDashboard extends Component {
           // Not reach to Server
           this.setState({
             openSnackbar: true,
-            message: NETWORK_REACH_ERROR
+            messages: [NETWORK_REACH_ERROR]
           });
         } else if (error.response.status === 400) {
           //  bad request
-          console.dir(error);
-          let message = Object.keys(error.response.data.errors).map(key => {
-            let errorMessage = error.response.data.errors[key].map(msg => key + ' ' + msg);
-            return errorMessage.join('\n');
-          }, error.response.data.errors).join('\n')
           this.setState({
             openSnackbar: true,
-            message: message
+            messages: buildErrorMessage(error.response.data.errors)
           });
         } else if (error.response.status === 401) {
           // Unauthorized
@@ -194,7 +182,7 @@ class AccountDashboard extends Component {
           // Undefined Fatal Error
           this.setState({
             openSnackbar: true,
-            message: CHANGE_ACCOUNT_FATAL_ERROR
+            messages: [CHANGE_ACCOUNT_FATAL_ERROR]
           });
         }
         console.error(error);
@@ -311,28 +299,10 @@ class AccountDashboard extends Component {
               </Paper>
             </Grid>
           </Grid>
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}
+          <FeedbackSnackbar
             open={this.state.openSnackbar}
-            autoHideDuration={3000}
             onRequestClose={this.handleRequestCloseSnackbar}
-            SnackbarContentProps={{
-              'aria-describedby': 'message-id',
-            }}
-            message={<span id="message-id">{this.state.message}</span>}
-            action={[
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={this.handleRequestCloseSnackbar}
-              >
-                <CloseIcon />
-              </IconButton>,
-            ]}
+            messages={this.state.messages}
           />
         </div>
       );
