@@ -1,5 +1,6 @@
-import {Redirect} from 'react-router-dom';
 import React, {Component} from 'react';
+
+import RedirectOnce from '../RedirectOnce';
 
 /**
  * ログイン認証が必要なコンポーネントのラッパー。
@@ -31,11 +32,10 @@ export const withAuthorization = InnerComponent => {
 
     render() {
       return (
-        this.state.authorized ? (
+        <div>
+          <RedirectOnce to={'/signin'} if={!this.state.authorized}/>
           <InnerComponent {...this.props} {...this.state}/>
-        ) : (
-          <Redirect to={'/signin'}/>
-        )
+        </div>
       );
     }
   }

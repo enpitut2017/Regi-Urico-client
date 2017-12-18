@@ -5,12 +5,12 @@ import {
   TextField,
   Typography,
 } from 'material-ui';
-import { Redirect } from 'react-router-dom';
 import Card, { CardContent } from 'material-ui/Card';
+import CloseIcon from 'material-ui-icons/Close';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import React, { Component } from 'react';
-import CloseIcon from 'material-ui-icons/Close';
+
 import {
   ACCOUNT_NAME,
   CHANGE_ACCOUNT_INFO,
@@ -25,6 +25,7 @@ import { BASE_URI, CHANGE_ACCOUNT_URI, DELETE_ACCOUNT_URI } from './const/urls';
 import { createXHRInstance } from './worker-service/axiosService';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
+import RedirectOnce from './RedirectOnce';
 
 const styles = {
   gridStyle: {
@@ -206,137 +207,134 @@ class AccountDashboard extends Component {
   }
 
   render() {
-    if (this.state.redirectToRoot) {
-      return <Redirect to="/" />;
-    } else {
-      return (
-        <div>
-          <Grid container justify='center'>
-            <Grid item xs={12} sm={11} md={8} lg={6} xl={4} style={styles.gridStyle}>
-              <Paper>
-                <Grid container justify='center'>
-                  <Grid item xs={10} style={styles.iconColor}>
-                    <Grid item xs={12} md={12} style={styles.serviceName}>
-                      <Typography type="headline" gutterBottom align="center">
-                        {CHANGE_ACCOUNT_INFO}
-                      </Typography>
-                    </Grid>
-                    <Card>
-                      <CardContent style={styles.cardContentStyle}>
-                        <Grid container spacing={24} justify="center">
-                          <Grid item xs={8} sm={4} md={4}>
-                            <TextField
-                              id="name"
-                              name="name"
-                              label={ACCOUNT_NAME}
-                              className="TextField"
-                              margin="normal"
-                              fullWidth
-                              value={this.state.name}
-                              onChange={this.handleChange}
-                            />
-                          </Grid>
-                        </Grid>
-                        <Grid container spacing={24} justify="center">
-                          <Grid item xs={8} sm={4} md={4}>
-                            <TextField
-                              id="password"
-                              name="password"
-                              label={PASSWORD}
-                              className="TextField"
-                              type="password"
-                              margin="normal"
-                              fullWidth
-                              value={this.state.password}
-                              onChange={this.handleChange}
-                            />
-                          </Grid>
-                        </Grid>
-                        <Grid container spacing={24} justify="center">
-                          <Grid item xs={8} sm={4} md={4}>
-                            <Button
-                              id="change-account"
-                              raised
-                              color="primary"
-                              disabled={this.disableChangeAccount()}
-                              onClick={this.handleClickChange}>
-                               {CHANGE_ACCOUNT_INFO}
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </CardContent>
-                    </Card>
+    return (
+      <div>
+        <RedirectOnce to="/" if={this.state.redirectToRoot} />
+        <Grid container justify='center'>
+          <Grid item xs={12} sm={11} md={8} lg={6} xl={4} style={styles.gridStyle}>
+            <Paper>
+              <Grid container justify='center'>
+                <Grid item xs={10} style={styles.iconColor}>
+                  <Grid item xs={12} md={12} style={styles.serviceName}>
+                    <Typography type="headline" gutterBottom align="center">
+                      {CHANGE_ACCOUNT_INFO}
+                    </Typography>
                   </Grid>
+                  <Card>
+                    <CardContent style={styles.cardContentStyle}>
+                      <Grid container spacing={24} justify="center">
+                        <Grid item xs={8} sm={4} md={4}>
+                          <TextField
+                            id="name"
+                            name="name"
+                            label={ACCOUNT_NAME}
+                            className="TextField"
+                            margin="normal"
+                            fullWidth
+                            value={this.state.name}
+                            onChange={this.handleChange}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid container spacing={24} justify="center">
+                        <Grid item xs={8} sm={4} md={4}>
+                          <TextField
+                            id="password"
+                            name="password"
+                            label={PASSWORD}
+                            className="TextField"
+                            type="password"
+                            margin="normal"
+                            fullWidth
+                            value={this.state.password}
+                            onChange={this.handleChange}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid container spacing={24} justify="center">
+                        <Grid item xs={8} sm={4} md={4}>
+                          <Button
+                            id="change-account"
+                            raised
+                            color="primary"
+                            disabled={this.disableChangeAccount()}
+                            onClick={this.handleClickChange}>
+                             {CHANGE_ACCOUNT_INFO}
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
                 </Grid>
-                <Grid container justify='center'>
-                  <Grid item xs={10} style={styles.iconColor}>
-                    <Grid item xs={12} md={12} style={styles.serviceName}>
-                      <Typography type="headline" gutterBottom align="center">
-                        {DELETE_ACCOUNT}
-                      </Typography>
-                    </Grid>
-                    <Card>
-                      <CardContent style={styles.cardContentStyle}>
-                        <Grid container spacing={24} justify="center">
-                          <Grid item xs={8} sm={4} md={4}>
-                            <TextField
-                              id="confirm-delete"
-                              name="confirm-delete"
-                              label={CONFIRM_PASSWORD}
-                              className="TextField"
-                              type="password"
-                              margin="normal"
-                              fullWidth
-                              value={this.state.confirmDelete}
-                              onChange={this.handleChange}
-                            />
-                          </Grid>
-                        </Grid>
-                        <Grid container spacing={24} justify="center">
-                          <Grid item xs={8} sm={4} md={4}>
-                            <Button
-                              id="delete-account"
-                              raised
-                              color="primary"
-                              disabled={this.disableDeleteAccount()}
-                              onClick={this.handleClickDelete}>
-                               {DELETE_ACCOUNT}
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </CardContent>
-                    </Card>
+              </Grid>
+              <Grid container justify='center'>
+                <Grid item xs={10} style={styles.iconColor}>
+                  <Grid item xs={12} md={12} style={styles.serviceName}>
+                    <Typography type="headline" gutterBottom align="center">
+                      {DELETE_ACCOUNT}
+                    </Typography>
                   </Grid>
+                  <Card>
+                    <CardContent style={styles.cardContentStyle}>
+                      <Grid container spacing={24} justify="center">
+                        <Grid item xs={8} sm={4} md={4}>
+                          <TextField
+                            id="confirm-delete"
+                            name="confirm-delete"
+                            label={CONFIRM_PASSWORD}
+                            className="TextField"
+                            type="password"
+                            margin="normal"
+                            fullWidth
+                            value={this.state.confirmDelete}
+                            onChange={this.handleChange}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid container spacing={24} justify="center">
+                        <Grid item xs={8} sm={4} md={4}>
+                          <Button
+                            id="delete-account"
+                            raised
+                            color="primary"
+                            disabled={this.disableDeleteAccount()}
+                            onClick={this.handleClickDelete}>
+                             {DELETE_ACCOUNT}
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
                 </Grid>
-              </Paper>
-            </Grid>
+              </Grid>
+            </Paper>
           </Grid>
-          <Snackbar
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'center',
-            }}
-            open={this.state.openSnackbar}
-            autoHideDuration={3000}
-            onRequestClose={this.handleRequestCloseSnackbar}
-            SnackbarContentProps={{
-              'aria-describedby': 'message-id',
-            }}
-            message={<span id="message-id">{this.state.message}</span>}
-            action={[
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={this.handleRequestCloseSnackbar}
-              >
-                <CloseIcon />
-              </IconButton>,
-            ]}
-          />
-        </div>
-      );
-    }
+        </Grid>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          open={this.state.openSnackbar}
+          autoHideDuration={3000}
+          onRequestClose={this.handleRequestCloseSnackbar}
+          SnackbarContentProps={{
+            'aria-describedby': 'message-id',
+          }}
+          message={<span id="message-id">{this.state.message}</span>}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={this.handleRequestCloseSnackbar}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
+        />
+      </div>
+    );
   }
 }
 

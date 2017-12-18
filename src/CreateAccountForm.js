@@ -1,4 +1,3 @@
-import { Redirect } from 'react-router-dom';
 import Button from 'material-ui/Button';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
@@ -17,6 +16,7 @@ import {
   SERVICE_NAME
 } from './const/const-values';
 import {BASE_URI, SIGNUP_URI} from './const/urls';
+import RedirectOnce from './RedirectOnce';
 
 const styles = {
   gridPaper: {
@@ -104,91 +104,90 @@ class CreateAccountForm extends Component {
   }
 
   render = () => {
-    if (this.state.redirectToDashboard) {
-      return (<Redirect to={"/"} />);
-    } else if (this.state.redirectToSignIn) {
-      return (<Redirect to={"/"} />);
-    }
     return (
-      <Grid container spacing={24} justify="center">
-        <Grid item xs={12} md={12} style={styles.serviceName}>
-          <Typography type="display1" gutterBottom align="center" color="secondary">
-            {SERVICE_NAME}
-          </Typography>
+      <div>
+        <RedirectOnce to={"/"} if={this.state.redirectToDashboard} />
+        <RedirectOnce to={"/"} if={this.state.redirectToSignIn} />
+        <Grid container spacing={24} justify="center">
+          <Grid item xs={12} md={12} style={styles.serviceName}>
+            <Typography type="display1" gutterBottom align="center" color="secondary">
+              {SERVICE_NAME}
+            </Typography>
+          </Grid>
+          <Grid item xs={10} md={6} style={styles.gridPaper}>
+            <Paper style={styles.paper}>
+              <form>
+                <Grid container spacing={24} justify="center">
+                  <Grid item xs={8} sm={4} md={4}>
+                    <TextField
+                      id="name"
+                      name="name"
+                      label={ACCOUNT_NAME}
+                      className="TextField"
+                      margin="normal"
+                      fullWidth
+                      value={this.state.name}
+                      onChange={this.handleChange}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={24} justify="center">
+                  <Grid item xs={8} sm={4} md={4}>
+                    <TextField
+                      id="password"
+                      name="password"
+                      label={PASSWORD}
+                      className="TextField"
+                      type="password"
+                      margin="normal"
+                      fullWidth
+                      value={this.state.password}
+                      onChange={this.handleChange}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={24} justify="center">
+                  <Grid item xs={8} sm={4} md={4}>
+                    <TextField
+                      id="confirm-password"
+                      name="confirm-password"
+                      label={CONFIRM_PASSWORD}
+                      className="TextField"
+                      type="password"
+                      margin="normal"
+                      fullWidth
+                      value={this.state.confirmPassword}
+                      onChange={this.handleChange}
+                    />
+                  </Grid>
+                </Grid>
+                <Grid container spacing={24} justify="center">
+                  <Grid item xs={8} sm={4} md={4}>
+                    <Button
+                      id="signup"
+                      raised
+                      color="primary"
+                      disabled={this.disableCreateAccount()}
+                      onClick={this.handleClickSignup}>
+                       {CREATE_ACCOUNT}
+                    </Button>
+                  </Grid>
+                </Grid>
+                <Grid container spacing={24} justify="center" alignItems="baseline">
+                  <Grid item xs={8} sm={4} md={5}>
+                    <Typography type="caption">{ALREADY_HAVE_ACCOUNT}</Typography>
+                  </Grid>
+                  <Grid item xs={8} sm={3} md={3}>
+                    <Button id="signin" color="primary" onClick={this.handleClickSignin}>
+                      {LOGIN}
+                    </Button>
+                  </Grid>
+                </Grid>
+              </form>
+            </Paper>
+          </Grid>
         </Grid>
-        <Grid item xs={10} md={6} style={styles.gridPaper}>
-          <Paper style={styles.paper}>
-            <form>
-              <Grid container spacing={24} justify="center">
-                <Grid item xs={8} sm={4} md={4}>
-                  <TextField
-                    id="name"
-                    name="name"
-                    label={ACCOUNT_NAME}
-                    className="TextField"
-                    margin="normal"
-                    fullWidth
-                    value={this.state.name}
-                    onChange={this.handleChange}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={24} justify="center">
-                <Grid item xs={8} sm={4} md={4}>
-                  <TextField
-                    id="password"
-                    name="password"
-                    label={PASSWORD}
-                    className="TextField"
-                    type="password"
-                    margin="normal"
-                    fullWidth
-                    value={this.state.password}
-                    onChange={this.handleChange}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={24} justify="center">
-                <Grid item xs={8} sm={4} md={4}>
-                  <TextField
-                    id="confirm-password"
-                    name="confirm-password"
-                    label={CONFIRM_PASSWORD}
-                    className="TextField"
-                    type="password"
-                    margin="normal"
-                    fullWidth
-                    value={this.state.confirmPassword}
-                    onChange={this.handleChange}
-                  />
-                </Grid>
-              </Grid>
-              <Grid container spacing={24} justify="center">
-                <Grid item xs={8} sm={4} md={4}>
-                  <Button
-                    id="signup"
-                    raised
-                    color="primary"
-                    disabled={this.disableCreateAccount()}
-                    onClick={this.handleClickSignup}>
-                     {CREATE_ACCOUNT}
-                  </Button>
-                </Grid>
-              </Grid>
-              <Grid container spacing={24} justify="center" alignItems="baseline">
-                <Grid item xs={8} sm={4} md={5}>
-                  <Typography type="caption">{ALREADY_HAVE_ACCOUNT}</Typography>
-                </Grid>
-                <Grid item xs={8} sm={3} md={3}>
-                  <Button id="signin" color="primary" onClick={this.handleClickSignin}>
-                    {LOGIN}
-                  </Button>
-                </Grid>
-              </Grid>
-            </form>
-          </Paper>
-        </Grid>
-      </Grid>
+      </div>
     )
   }
 }

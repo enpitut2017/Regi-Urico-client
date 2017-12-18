@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
-import Grid from 'material-ui/Grid';
-import TextField from 'material-ui/TextField';
 import Button from 'material-ui/Button';
+import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
+import React, { Component } from 'react';
+import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
-import { NullOrEmpty } from './worker-service/formService';
-import { createXHRInstance } from './worker-service/axiosService';
-import { CREATE_EVENT, EVENT_NAME, BACK, EVENTS_URI } from './const/const-values';
+
 import { BASE_URI } from './const/urls';
+import { CREATE_EVENT, EVENT_NAME, EVENTS_URI } from './const/const-values';
+import { createXHRInstance } from './worker-service/axiosService';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
+import RedirectOnce from './RedirectOnce';
 
 const styles = {
   gridPaper: {
@@ -58,49 +58,51 @@ class CreateEventForm extends Component {
 
   renderCreateEventForm = () => {
     return (
-      <Grid container spacing={24} justify='center'>
-        <Grid item xs={12} md={12} style={styles.serviceName}>
-          <Typography type='display1' gutterBottom align='center' color='secondary'>
-            {CREATE_EVENT}
-          </Typography>
-        </Grid>
-        <Grid item xs={10} md={6} style={styles.gridPaper}>
-          <Paper style={styles.paper}>
-            <Grid container spacing={24} justify='center'>
-              <Grid item xs={8} sm={4} md={4}>
-                <TextField
-                  id='eventName'
-                  name='eventName'
-                  label={EVENT_NAME}
-                  value={this.state.eventName}
-                  onChange={this.handleChange}
-                  className='TextField'
-                  margin='normal'
-                  fullWidth
-                />
+      <div>
+        <RedirectOnce to='/' if={this.state.redirect} />
+        <Grid container spacing={24} justify='center'>
+          <Grid item xs={12} md={12} style={styles.serviceName}>
+            <Typography type='display1' gutterBottom align='center' color='secondary'>
+              {CREATE_EVENT}
+            </Typography>
+          </Grid>
+          <Grid item xs={10} md={6} style={styles.gridPaper}>
+            <Paper style={styles.paper}>
+              <Grid container spacing={24} justify='center'>
+                <Grid item xs={8} sm={4} md={4}>
+                  <TextField
+                    id='eventName'
+                    name='eventName'
+                    label={EVENT_NAME}
+                    value={this.state.eventName}
+                    onChange={this.handleChange}
+                    className='TextField'
+                    margin='normal'
+                    fullWidth
+                  />
+                </Grid>
               </Grid>
-            </Grid>
-            <Grid container spacing={24} justify='center'>
-              <Grid item xs={8} sm={4} md={4}>
-                <Button
-                  id='createEvnet'
-                  raised
-                  color='primary'
-                  onClick={this.handleClick}
-                  disabled={this.state.disable}
-                >
-                  {CREATE_EVENT}
-                </Button>
+              <Grid container spacing={24} justify='center'>
+                <Grid item xs={8} sm={4} md={4}>
+                  <Button
+                    id='createEvnet'
+                    raised
+                    color='primary'
+                    onClick={this.handleClick}
+                    disabled={this.state.disable}
+                  >
+                    {CREATE_EVENT}
+                  </Button>
+                </Grid>
               </Grid>
-            </Grid>
-          </Paper>
+            </Paper>
+          </Grid>
         </Grid>
-      </Grid>
+      </div>
     );
   }
 
   render() {
-    if (this.state.redirect) return <Redirect to='/' />
     return this.renderCreateEventForm();
   }
 }
