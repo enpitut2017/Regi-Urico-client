@@ -1,20 +1,25 @@
-import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
+import Button from 'material-ui/Button';
+import Card, { CardContent, CardActions } from 'material-ui/Card';
+import DeleteIcon from 'material-ui-icons/Delete';
+import EditIcon from 'material-ui-icons/Edit';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
-import Card, { CardContent, CardActions } from 'material-ui/Card';
-import Button from 'material-ui/Button';
-import EditIcon from 'material-ui-icons/Edit';
-import DeleteIcon from 'material-ui-icons/Delete';
+import React, { Component } from 'react';
 import Typography from 'material-ui/Typography';
-import TextFiled from 'material-ui/TextField';
+
+import { BASE_URI, EVENTS_URI } from './const/urls';
+import {
+  DELETE_EVENT_FATAL_ERROR,
+  NETWORK_REACH_ERROR,
+} from './const/const-values';
+import { buildErrorMessage } from './worker-service/errorMessageService';
+import { createXHRInstance } from './worker-service/axiosService';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
-import { TextField } from 'material-ui';
-import EventDialog from './EventDialog';
 import DeleteEventDialog from './DeleteEventDialog';
-import { createXHRInstance } from './worker-service/axiosService';
-import { EVENT_NAME, EVENTS_LIST } from './const/const-values';
-import { BASE_URI, EVENTS_URI } from './const/urls';
+import EventDialog from './EventDialog';
+import FeedbackSnackbar from './FeedbackSnackbar';
 
 class EventDashboard extends Component {
   constructor(props) {
@@ -25,7 +30,10 @@ class EventDashboard extends Component {
         name: props.event_name
       },
       editDialog: false,
-      deleteDialog: false
+      deleteDialog: false,
+      openSnackbar: false,
+      messages: [],
+      redirectToRoot: false,
     }
   }
 
@@ -80,12 +88,41 @@ class EventDashboard extends Component {
       .delete(url, {data: event})
       .then(response => {
         if (response.status === 204) return; // Eventsが空
-        this.props.changeEventForEventDashboard(response.id);
+        this.props.changeEventForEventDashboard(response.data.id);
         this.setState({
-          deleteDialog: false
+          deleteDialog: false,
+          redirectToRoot: true
         });
       })
       .catch(error => {
+        if (error.response === undefined) {
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          localStorage.removeItem('authorizedToken');
+          this.setState({redirectToRoot: true});
+        } else if (error.response.status === 403) {
+          // Forbidden to modify events whose owner isn't current user
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          })
+        } else if (error.response.status === 404) {
+          // Event Not Found
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          })
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [DELETE_EVENT_FATAL_ERROR]
+          })
+        }
         console.error(error);
       });
   }
@@ -97,7 +134,12 @@ class EventDashboard extends Component {
     });
   }
 
+  handleRequestClose = () => {
+    this.setState({openSnackbar: false});
+  }
+
   render() {
+    if (this.state.redirectToRoot) return <Redirect to="/" />;
     return(
       <div>
         <Grid container justify='center'>
@@ -127,6 +169,11 @@ class EventDashboard extends Component {
           onRequestClose={this.onRequestDeleteClose}
           event={this.state.event}
           handleDelete={this.handleDelete}
+        />
+        <FeedbackSnackbar
+          open={this.state.openSnackbar}
+          onRequestClose={this.handleRequestClose}
+          messages={this.state.messages}
         />
       </div>
     );

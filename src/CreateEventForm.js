@@ -6,10 +6,18 @@ import TextField from 'material-ui/TextField';
 import Typography from 'material-ui/Typography';
 
 import { BASE_URI } from './const/urls';
-import { CREATE_EVENT, EVENT_NAME, EVENTS_URI } from './const/const-values';
+import {
+  CREATE_EVENT,
+  CREATE_EVENT_FATAL_ERROR,
+  EVENTS_URI,
+  EVENT_NAME,
+  NETWORK_REACH_ERROR,
+} from './const/const-values';
+import { buildErrorMessage } from './worker-service/errorMessageService';
 import { createXHRInstance } from './worker-service/axiosService';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
+import FeedbackSnackbar from './FeedbackSnackbar';
 import RedirectOnce from './RedirectOnce';
 
 const styles = {
@@ -33,7 +41,9 @@ class CreateEventForm extends Component {
     this.state = {
       eventName: '',
       redirect: false,
-      disable: true
+      disable: true,
+      openSnackbar: false,
+      messages: []
     };
   }
 
@@ -49,11 +59,42 @@ class CreateEventForm extends Component {
     const url = `${BASE_URI}${EVENTS_URI}`;
     const eventName = this.state.eventName;
     const instance = createXHRInstance();
-    const response = await instance.post(url, {name: eventName});
+    const response = await instance.post(url, {name: eventName}).catch(error => {
+      if (error.response === undefined) {
+        // Not reach to Server
+        this.setState({
+          openSnackbar: true,
+          messages: [NETWORK_REACH_ERROR]
+        });
+      } else if (error.response.status === 400) {
+        //  bad request
+        console.log(buildErrorMessage(error.response.data.errors));
+        this.setState({
+          openSnackbar: true,
+          messages: buildErrorMessage(error.response.data.errors)
+        });
+      } else if (error.response.status === 401) {
+        // Unauthorized
+        localStorage.removeItem('authorizedToken');
+        this.setState({redirect: true});
+      } else {
+        // Undefined Fatal Error
+        this.setState({
+          openSnackbar: true,
+          messages: [CREATE_EVENT_FATAL_ERROR]
+        });
+      }
+      console.error(error);
+    });
+    if (response === undefined || response === null) return;
     localStorage.event_id = response.data.id;
     await this.setState({
       redirect: true
     });
+  }
+
+  handleRequestClose = () => {
+    this.setState({openSnackbar: false});
   }
 
   renderCreateEventForm = () => {
@@ -98,6 +139,11 @@ class CreateEventForm extends Component {
             </Paper>
           </Grid>
         </Grid>
+        <FeedbackSnackbar
+          open={this.state.openSnackbar}
+          onRequestClose={this.handleRequestClose}
+          messages={this.state.messages}
+        />
       </div>
     );
   }

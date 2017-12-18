@@ -11,12 +11,16 @@ import {
   ALREADY_HAVE_ACCOUNT,
   CONFIRM_PASSWORD,
   CREATE_ACCOUNT,
+  CREATE_ACCOUNT_FATAL_ERROR,
   LOGIN,
+  NETWORK_REACH_ERROR,
   PASSWORD,
-  SERVICE_NAME
+  SERVICE_NAME,
 } from './const/const-values';
 import {BASE_URI, SIGNUP_URI} from './const/urls';
 import RedirectOnce from './RedirectOnce';
+import { buildErrorMessage } from './worker-service/errorMessageService';
+import FeedbackSnackbar from './FeedbackSnackbar';
 
 const styles = {
   gridPaper: {
@@ -45,6 +49,8 @@ class CreateAccountForm extends Component {
       confirmPassword: '',
       redirectToSignIn: false,
       redirectToDashboard: false,
+      openSnackbar: false,
+      messages: []
     }
   }
 
@@ -77,13 +83,36 @@ class CreateAccountForm extends Component {
         password_confirmation: this.state.confirmPassword
       })
       .then(response => {
-        if (response.errors == null) {
+        if (response !== undefined && response !== null && response.status === 201) {
           localStorage.setItem('authorizedToken', response.data.token);
           this.setState({ redirectToDashboard: true });
         } else {
-          // Server rejected or server error
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [CREATE_ACCOUNT_FATAL_ERROR]
+          });
         }})
       .catch(error => {
+        if (error.response === undefined) {
+          // Not reach to Server
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 400) {
+          // Bad request
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [CREATE_ACCOUNT_FATAL_ERROR]
+          });
+        }
         // Not reach to Server
         console.error(error);
       });
@@ -101,6 +130,12 @@ class CreateAccountForm extends Component {
       || this.state.password === ""
       || this.state.password !== this.state.confirmPassword
     );
+  }
+
+  handleRequestClose = () => {
+    this.setState({
+      openSnackbar: false
+    })
   }
 
   render = () => {
@@ -187,8 +222,13 @@ class CreateAccountForm extends Component {
             </Paper>
           </Grid>
         </Grid>
+        <FeedbackSnackbar
+          open={this.state.openSnackbar}
+          onRequestClose={this.handleRequestClose}
+          messages={this.state.messages}
+        />
       </div>
-    )
+    );
   }
 }
 

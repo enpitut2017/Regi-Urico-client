@@ -10,12 +10,16 @@ import {
   ACCOUNT_NAME,
   CREATE_ACCOUNT,
   LOGIN,
+  NETWORK_REACH_ERROR,
   NOT_HAVE_ACCOUNT,
   PASSWORD,
   SERVICE_NAME,
+  SIGNIN_FATAL_ERROR,
 } from './const/const-values';
 import { BASE_URI, SIGNIN_URI } from './const/urls';
 import RedirectOnce from './RedirectOnce';
+import { buildErrorMessage } from './worker-service/errorMessageService';
+import FeedbackSnackbar from './FeedbackSnackbar';
 
 const styles = {
   gridPaper: {
@@ -48,6 +52,8 @@ class LoginForm extends Component {
       confirmPassword: '',
       redirectToSignUp: false,
       redirectToDashboard: false,
+      openSnackbar: false,
+      messages: []
     }
   }
 
@@ -80,15 +86,37 @@ class LoginForm extends Component {
         password: this.state.password
       })
       .then(response => {
-        if (response.errors == null) {
+        if (response !== undefined && response !== null && response.status === 200) {
           localStorage.setItem('name', response.data.name);
           localStorage.setItem('authorizedToken', response.data.token);
           this.setState({redirectToDashboard: true});
         } else {
-          // Server rejected or server error
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [SIGNIN_FATAL_ERROR]
+          });
         }})
       .catch(error => {
-        // Not reach to Server
+        if (error.response === undefined) {
+          // Not reach to Server
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [SIGNIN_FATAL_ERROR]
+          });
+        }
         console.error(error);
       });
   };
@@ -99,6 +127,10 @@ class LoginForm extends Component {
       || this.state.password === ""
     );
   };
+
+  handleRequestClose = () => {
+    this.setState({openSnackbar: false});
+  }
 
   render = () => {
     return (
@@ -162,6 +194,11 @@ class LoginForm extends Component {
             </Paper>
           </Grid>
         </Grid>
+        <FeedbackSnackbar
+          open={this.state.openSnackbar}
+          onRequestClose={this.handleRequestClose}
+          messages={this.state.messages}
+        />
       </div>
     );
   }
