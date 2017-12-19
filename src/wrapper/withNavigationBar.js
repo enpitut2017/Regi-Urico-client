@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 
-import { BASE_URI, EVENTS_URI } from '../const/urls';
+import { BASE_URI, EVENTS_URI, SELLER_URI } from '../const/urls';
 import {
   CONFIRM_LOGOUT,
   CONFIRM_LOGOUT_TEXT,
@@ -55,7 +55,8 @@ export const withNavigationBar = InnerComponent => {
         openSnackbar: false,
         messages: [],
         redirectToDashboard: false,
-        accountMenuAnchorEl: null
+        accountMenuAnchorEl: null,
+        seller: null,
       };
     }
 
@@ -68,70 +69,118 @@ export const withNavigationBar = InnerComponent => {
         accountMenuAnchorEl: null
       });
       this.getEvents();
+      this.getSeller();
     }
 
-    getEvents = () => {
-      const token = localStorage.authorizedToken;
-      if (token == null) {
-        this.setState({redirectToSignin: true});
-        return;
-      }
-      const getUrl = `${BASE_URI}${EVENTS_URI}`;
-      axios
-        .get(getUrl, {
-          headers: {'X-Authorized-Token': token},
-        })
-        .then(response => {
-          if (response !== undefined && response !== null && response.status === 200) {
-            const newEvents = response.data.events;
-            if (newEvents === undefined || newEvents.length <= 0) {
-              this.setState({redirectToCreateEvent: true});
-            } else {
-              const lastUpdateEventId = newEvents[0].id;
-              let newEventId = parseInt(localStorage.event_id, 10);
-              if (Number.isNaN(newEventId) || newEvents.every(event => event.id !== newEventId)) {
-                newEventId = lastUpdateEventId;
-              }
-              const newEvent = newEvents.find(event =>
-                event.id === newEventId
-              );
-              const newTitle = newEvent.name;
-              this.setState({
-                events: newEvents,
-                event_id: newEventId,
-                title: newTitle
+      getEvents = () => {
+          const token = localStorage.authorizedToken;
+          if (token == null) {
+              this.setState({redirectToSignin: true});
+              return;
+          }
+          const getUrl = `${BASE_URI}${EVENTS_URI}`;
+          axios
+              .get(getUrl, {
+                  headers: {'X-Authorized-Token': token},
+              })
+              .then(response => {
+                  if (response !== undefined && response !== null && response.status === 200) {
+                      const newEvents = response.data.events;
+                      if (newEvents === undefined || newEvents.length <= 0) {
+                          this.setState({redirectToCreateEvent: true});
+                      } else {
+                          const lastUpdateEventId = newEvents[0].id;
+                          let newEventId = parseInt(localStorage.event_id, 10);
+                          if (Number.isNaN(newEventId) || newEvents.every(event => event.id !== newEventId)) {
+                              newEventId = lastUpdateEventId;
+                          }
+                          const newEvent = newEvents.find(event =>
+                              event.id === newEventId
+                          );
+                          const newTitle = newEvent.name;
+                          this.setState({
+                              events: newEvents,
+                              event_id: newEventId,
+                              title: newTitle
+                          });
+                          localStorage.event_id = newEventId;
+                      }
+                  } else {
+                      // Undefined Fatal Error
+                      this.setState({
+                          openSnackbar: true,
+                          messages: [GET_EVENTS_FATAL_ERROR]
+                      });
+                  }
+              })
+              .catch(error => {
+                  if (error.response === undefined) {
+                      // Not reach to Server
+                      this.setState({
+                          openSnackbar: true,
+                          messages: [NETWORK_REACH_ERROR]
+                      });
+                  } else if (error.response.status === 401) {
+                      // Unauthorized
+                      localStorage.removeItem('authorizedToken');
+                      this.setState({redirectToSignin: true});
+                  } else {
+                      // Undefined Fatal Error
+                      this.setState({
+                          openSnackbar: true,
+                          messages: [GET_EVENTS_FATAL_ERROR]
+                      });
+                  }
+                  console.error(error);
               });
-              localStorage.event_id = newEventId;
-            }
-          } else {
-            // Undefined Fatal Error
-            this.setState({
-              openSnackbar: true,
-              messages: [GET_EVENTS_FATAL_ERROR]
-            });
+      }
+
+      getSeller = () => {
+          const token = localStorage.authorizedToken;
+          if (token == null) {
+              this.setState({redirectToSignin: true});
+              return;
           }
-        })
-        .catch(error => {
-          if (error.response === undefined) {
-            // Not reach to Server
-            this.setState({
-              openSnackbar: true,
-              messages: [NETWORK_REACH_ERROR]
-            });
-          } else if (error.response.status === 401) {
-            // Unauthorized
-            localStorage.removeItem('authorizedToken');
-            this.setState({redirectToSignin: true});
-          } else {
-            // Undefined Fatal Error
-            this.setState({
-              openSnackbar: true,
-              messages: [GET_EVENTS_FATAL_ERROR]
-            });
-          }
-          console.error(error);
-        });
-    }
+          const getUrl = `${BASE_URI}${SELLER_URI}`;
+          axios
+              .get(getUrl, {
+                  headers: {'X-Authorized-Token': token},
+              })
+              .then(response => {
+                  if (response !== undefined && response !== null && response.status === 200) {
+                      const seller = response.data;
+                      this.setState({
+                          seller: seller,
+                      });
+                  } else {
+                      // Undefined Fatal Error
+                      this.setState({
+                          openSnackbar: true,
+                          messages: [GET_EVENTS_FATAL_ERROR]
+                      });
+                  }
+              })
+              .catch(error => {
+                  if (error.response === undefined) {
+                      // Not reach to Server
+                      this.setState({
+                          openSnackbar: true,
+                          messages: [NETWORK_REACH_ERROR]
+                      });
+                  } else if (error.response.status === 401) {
+                      // Unauthorized
+                      localStorage.removeItem('authorizedToken');
+                      this.setState({redirectToSignin: true});
+                  } else {
+                      // Undefined Fatal Error
+                      this.setState({
+                          openSnackbar: true,
+                          messages: [GET_EVENTS_FATAL_ERROR]
+                      });
+                  }
+                  console.error(error);
+              });
+      }
 
     handleSignOut = () => {
       this.setState({openDialog: true});
@@ -255,6 +304,7 @@ export const withNavigationBar = InnerComponent => {
               anchorEl={this.state.accountMenuAnchorEl}
               handleGoBack={this.handleGoBack}
               authorized={true}
+              seller={this.state.seller}
               goBack={this.props.location.pathname!=="/"}
             />
           </header>

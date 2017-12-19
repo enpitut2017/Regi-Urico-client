@@ -25,13 +25,31 @@ const styles = {
     textDecoration: 'none',
     color: 'black',
   },
-  svg: {
+  icon: {
     width: 24,
+    verticalAlign: 'text-bottom',
+    marginRight: '0.5em',
   },
 }
 
 const NavigationBar = props => {
   const open = Boolean(props.anchorEl);
+  const isTwitterLoggedIn = (props.seller !== null && props.seller.twitter_screen_name !== null);
+  let twitterMenu = null;
+  if (isTwitterLoggedIn) {
+    twitterMenu = <MenuItem>
+        <a href={`https://twitter.com/${props.seller.twitter_screen_name}`} style={styles.a}>
+            <img src={props.seller.twitter_image_url} style={styles.icon}/>
+            {`${props.seller.twitter_name} (@${props.seller.twitter_screen_name})`}
+        </a>
+    </MenuItem>
+  } else {
+    twitterMenu = <MenuItem>
+        <a href={BASE_URI + TWITTER_URI} style={styles.a}>
+          <img src="/twitter.svg" style={styles.icon}/> {CONNECT_TO_TWITTER}
+        </a>
+    </MenuItem>
+  }
   return (
     <nav>
       <AppBar position="fixed" style={styles.navBar}>
@@ -81,16 +99,12 @@ const NavigationBar = props => {
             open={open}
             onRequestClose={props.handleRequestClose}
           >
-            <MenuItem>
-              <a href={BASE_URI + TWITTER_URI} style={styles.a}>
-                <img src="/twitter.svg" style={styles.svg}/> {CONNECT_TO_TWITTER}
-              </a>
-            </MenuItem>
+            {twitterMenu}
             <MenuItem onClick={props.handleChangeAccountInfoClick}>
-              <AccountCircle /> {CHANGE_ACCOUNT_INFO}
+              <AccountCircle style={styles.icon} /> {CHANGE_ACCOUNT_INFO}
             </MenuItem>
             <MenuItem onClick={props.handleSignOut}>
-              <ExitToApp /> {LOGOUT}
+              <ExitToApp style={styles.icon} /> {LOGOUT}
             </MenuItem>
           </Menu>
         </Toolbar>
