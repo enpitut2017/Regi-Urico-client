@@ -50,6 +50,7 @@ export const withNavigationBar = InnerComponent => {
         openDialog: false,
         redirectToSignin: false,
         redirectToCreateEvent: false,
+        redirectToTwitter: false,
         redirectToAccountDashboard: false,
         accountMenuAnchorEl: null,
         openSnackbar: false,
@@ -63,6 +64,7 @@ export const withNavigationBar = InnerComponent => {
       this.setState({
         redirectToSignin: false,
         redirectToCreateEvent: false,
+        redirectToTwitter: false,
         redirectToAccountDashboard: false,
         redirectToDashboard: false,
         accountMenuAnchorEl: null
@@ -219,6 +221,10 @@ export const withNavigationBar = InnerComponent => {
       this.setState({accountMenuAnchorEl: event.currentTarget});
     }
 
+    handleConnectToTwitterClick = () => {
+        this.setState({redirectToTwitter: true});
+    }
+
     handleChangeAccountInfoClick = () => {
       this.setState({redirectToAccountDashboard: true});
     }
@@ -242,6 +248,7 @@ export const withNavigationBar = InnerComponent => {
         <div>
           <RedirectOnce to="/signin" if={this.state.redirectToSignin} />
           <RedirectOnce to="/create_event" if={this.state.redirectToCreateEvent} />
+          <RedirectOnce to="/api/auth/twitter" if={this.state.redirectToTwitter} />
           <RedirectOnce to="/account" if={this.state.redirectToAccountDashboard} />
           <RedirectOnce to="/" if={this.state.redirectToDashboard} />
           <header>
@@ -250,8 +257,8 @@ export const withNavigationBar = InnerComponent => {
               handleSignOut={this.handleSignOut}
               handleOpenDrawer={this.handleOpenDrawer}
               handleOpenAccountMenu={this.handleOpenAccountMenu}
+              handleConnectToTwitterClick={this.handleConnectToTwitterClick}
               handleChangeAccountInfoClick={this.handleChangeAccountInfoClick}
-              handleSignOut={this.handleSignOut}
               handleRequestClose={this.handleRequestClose}
               anchorEl={this.state.accountMenuAnchorEl}
               handleGoBack={this.handleGoBack}

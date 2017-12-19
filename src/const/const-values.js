@@ -49,6 +49,7 @@ export const SAVE = `保存`;
 export const SERVICE_NAME = `Regi-Urico`;
 export const SUBTOTAL = `小計`;
 export const THE_CHANGE = `お釣り`;
+export const CONNECT_TO_TWITTER = `Twitter に接続する`;
 export const YEN = `円`;
 export const YEN_MARK = `¥`;
 

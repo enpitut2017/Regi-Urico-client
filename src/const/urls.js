@@ -32,3 +32,4 @@ export const EVENT_ITEMS_URI = `/event_items/`;
 export const REGISTER_URI = `/register/`;
 export const SIGNIN_URI = `/signin/`;
 export const SIGNUP_URI = `/sellers/`;
+export const TWITTER_URI = `/auth/twitter`;
