@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
-import Card, { CardActions, CardContent, CardText } from 'material-ui/Card';
+import Card, { CardContent } from 'material-ui/Card';
 import RegiIcon from 'material-ui-icons/ShoppingCart';
 import ItemIcon from 'material-ui-icons/CardGiftcard';
 import EventIcon from 'material-ui-icons/Assignment';

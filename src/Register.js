@@ -33,7 +33,6 @@ class Register extends Component {
       messages: [],
       redirectToRoot: false
     };
-    this.init(this.props.event_id);
   }
 
   componentWillReceiveProps = nextProps => {

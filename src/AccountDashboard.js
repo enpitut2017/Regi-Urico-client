@@ -101,7 +101,7 @@ class AccountDashboard extends Component {
         password: this.state.password
       })
       .then(response => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           // success to patch
           localStorage.setItem('name', response.data.name);
           this.setState({
@@ -151,7 +151,7 @@ class AccountDashboard extends Component {
         password: this.state.confirmDelete
       }})
       .then(response => {
-        if (response !== undefined && response !== null && response.status == 204) {
+        if (response !== undefined && response !== null && response.status === 204) {
           // success to delete
           localStorage.removeItem('authorizedToken');
           this.setState({redirectToRoot: true});
