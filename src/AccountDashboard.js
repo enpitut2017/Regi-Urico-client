@@ -1,6 +1,5 @@
 import { Button, TextField, Typography } from 'material-ui';
 import Card, { CardContent } from 'material-ui/Card';
-import CloseIcon from 'material-ui-icons/Close';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import React, { Component } from 'react';
