@@ -250,7 +250,6 @@ export const withNavigationBar = InnerComponent => {
               handleOpenDrawer={this.handleOpenDrawer}
               handleOpenAccountMenu={this.handleOpenAccountMenu}
               handleChangeAccountInfoClick={this.handleChangeAccountInfoClick}
-              handleSignOut={this.handleSignOut}
               handleRequestClose={this.handleRequestClose}
               anchorEl={this.state.accountMenuAnchorEl}
               handleGoBack={this.handleGoBack}
