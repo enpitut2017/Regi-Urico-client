@@ -30,5 +30,6 @@ export const DELETE_ACCOUNT_URI = `/sellers/`;
 export const EVENTS_URI = `/events/`;
 export const EVENT_ITEMS_URI = `/event_items/`;
 export const REGISTER_URI = `/register/`;
+export const SALES_LOGS_URI = `/sales_logs/`;
 export const SIGNIN_URI = `/signin/`;
 export const SIGNUP_URI = `/sellers/`;

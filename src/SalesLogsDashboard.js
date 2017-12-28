@@ -1,24 +1,15 @@
-import {
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography
-} from 'material-ui';
-import { Timeline, TimelineBlip, TimelineEvent } from 'react-event-timeline';
-import CalenderIcon from 'material-ui-icons/Today';
-import ExpandMoreIcon from 'material-ui-icons/ExpandMore';
-import ExpansionPanel, {
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from 'material-ui/ExpansionPanel';
+import { Grid, Typography } from 'material-ui';
+import { Timeline } from 'react-event-timeline';
 import React, {Component} from 'react';
-import ReceiptIcon from 'material-ui-icons/Payment';
 
+import { BASE_URI, SALES_LOGS_URI } from './const/urls';
+import { SALES_LOG } from './const/const-values';
+import { createXHRInstance } from './worker-service/axiosService';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
+import SalesLogsDatePoint from './SalesLogsDatePoint';
+import SalesLogsEmptyLogPoint from './SalesLogsEmptyLogPoint';
+import SalesLogsReceipt from './SalesLogsReceipt';
 
 const styles = {
   title: {
@@ -33,7 +24,88 @@ class SalesLogsDashboard extends Component {
   }
 
   getInitialState = () => {
-    return {};
+    return {
+      salesLogs: []
+    };
+  }
+
+  componentWillReceiveProps = nextProps => {
+    this.getSalesLogs(nextProps.event_id);
+  }
+
+  getSalesLogs = eventId => {
+    const url = `${BASE_URI}${SALES_LOGS_URI}${eventId}`;
+    createXHRInstance()
+      .get(url)
+      .then(response => {
+        if (response.status === 204) {
+          // No Logs yet
+          this.setState({
+            salesLogs: null
+          });
+        } else if (response.status === 200) {
+          // Some Log exists
+          this.setState({
+            salesLogs: response.data.sales_logs
+          });
+        } else {
+          // undefined Fatal Error
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  }
+
+  renderTimelines = () => {
+    let date = null;
+    let expanded = true;
+    if (this.state.salesLogs === null) {
+      return <SalesLogsEmptyLogPoint/>;
+    } else {
+      return this.state.salesLogs.map((salesLog, timelineIndex) => {
+        const receipts = salesLog.receipts.map((receipt, receiptIndex) => {
+          if (expanded) {
+            expanded = false;
+            return (
+              <SalesLogsReceipt
+                key={receiptIndex}
+                title="販売"
+                createdAt={receipt.formatted_time}
+                total={receipt.total}
+                defaultExpanded={true}
+                logs={receipt.logs}
+              />
+            );
+          } else {
+            return (
+              <SalesLogsReceipt
+                key={receiptIndex}
+                title="販売"
+                createdAt={receipt.formatted_time}
+                total={receipt.total}
+                logs={receipt.logs}
+              />
+            );
+          }
+        });
+        if (date !== salesLog.date) {
+          date = salesLog.date;
+          return (
+            <div key={timelineIndex}>
+              <SalesLogsDatePoint date={salesLog.formatted_date}/>
+              {receipts}
+            </div>
+          );
+        } else {
+          return (
+            <div key={timelineIndex}>
+              {receipts}
+            </div>
+          );
+        }
+      });
+    }
   }
 
   render() {
@@ -41,85 +113,14 @@ class SalesLogsDashboard extends Component {
       <Grid container justify="center">
         <Grid item xs={10} style={styles.title}>
           <Typography type="display1" gutterBottom align="center">
-            売上履歴
+            {SALES_LOG}
           </Typography>
         </Grid>
         <Grid item xs={12}>
           <Grid container justify="center">
             <Grid item xs={12}>
               <Timeline>
-                <TimelineBlip
-                  title="Today"
-                  icon={<CalenderIcon/>}
-                  iconColor="#ff4081"
-                />
-                <TimelineEvent
-                  title="販売"
-                  createdAt="16:12:00"
-                  icon={<ReceiptIcon/>}
-                  iconColor="#3f51b5"
-                  contentStyle={{boxShadow: 'none'}}
-                >
-                  <ExpansionPanel defaultExpanded={true}>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography>2600円</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails  style={{overflowX: 'auto', overflowY: 'none'}}>
-                      <Table style={{tableLayout: 'auto'}}>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell padding="none">商品</TableCell>
-                            <TableCell numeric padding="none">個数</TableCell>
-                            <TableCell numeric padding="none">小計</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell padding="none">GENSOUM@STER</TableCell>
-                            <TableCell numeric padding="none">1</TableCell>
-                            <TableCell numeric padding="none">1400</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell padding="none">東方魔烈槍</TableCell>
-                            <TableCell numeric padding="none">2</TableCell>
-                            <TableCell numeric padding="none">1200</TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                </TimelineEvent>
-                <TimelineEvent
-                  title="販売"
-                  createdAt="14:13:45"
-                  icon={<ReceiptIcon/>}
-                  iconColor="#3f51b5"
-                  contentStyle={{boxShadow: 'none'}}
-                >
-                  <ExpansionPanel>
-                    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography>2800円</Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails  style={{overflowX: 'auto', overflowY: 'none'}}>
-                      <Table style={{tableLayout: 'auto'}}>
-                        <TableHead>
-                          <TableRow>
-                            <TableCell padding="none">商品</TableCell>
-                            <TableCell numeric padding="none">個数</TableCell>
-                            <TableCell numeric padding="none">小計</TableCell>
-                          </TableRow>
-                        </TableHead>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell padding="none">GENSOUM@STER</TableCell>
-                            <TableCell numeric padding="none">2</TableCell>
-                            <TableCell numeric padding="none">2800</TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
-                </TimelineEvent>
+                {this.renderTimelines()}
               </Timeline>
             </Grid>
           </Grid>
