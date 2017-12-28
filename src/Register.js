@@ -139,7 +139,7 @@ class Register extends Component {
     const data = {
       event_id: this.state.event_id,
       items: this.postItems,
-      deposit: deposit
+      deposit: parseInt(deposit, 10),
     };
     const response = await instance.post(url, data).catch(error => {
       if (error.response === undefined) {
