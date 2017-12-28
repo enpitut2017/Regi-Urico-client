@@ -3,10 +3,17 @@ import { Timeline } from 'react-event-timeline';
 import React, {Component} from 'react';
 
 import { BASE_URI, SALES_LOGS_URI } from './const/urls';
-import { SALES_LOG } from './const/const-values';
+import {
+  GET_SALES_LOG_FATAL_ERROR,
+  NETWORK_REACH_ERROR,
+  SALES_LOG
+} from './const/const-values';
+import { buildErrorMessage } from './worker-service/errorMessageService';
 import { createXHRInstance } from './worker-service/axiosService';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { withNavigationBar } from './wrapper/withNavigationBar';
+import FeedbackSnackbar from './FeedbackSnackbar';
+import RedirectOnce from './RedirectOnce';
 import SalesLogsDatePoint from './SalesLogsDatePoint';
 import SalesLogsEmptyLogPoint from './SalesLogsEmptyLogPoint';
 import SalesLogsReceipt from './SalesLogsReceipt';
@@ -25,7 +32,10 @@ class SalesLogsDashboard extends Component {
 
   getInitialState = () => {
     return {
-      salesLogs: []
+      salesLogs: null,
+      openSnackbar: false,
+      messages: [],
+      redirectToRoot: false
     };
   }
 
@@ -50,9 +60,42 @@ class SalesLogsDashboard extends Component {
           });
         } else {
           // undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [GET_SALES_LOG_FATAL_ERROR]
+          })
         }
       })
       .catch(error => {
+        if (error.response === undefined) {
+          // Not reach to Server
+          this.setState({
+            openSnackbar: true,
+            messages: [NETWORK_REACH_ERROR]
+          });
+        } else if (error.response.status === 401) {
+          // Unauthorized
+          localStorage.removeItem('authorizedToken');
+          this.setState({redirectToRoot: true});
+        } else if (error.response.status === 403) {
+          // Forbidden to get events whose owner isn't current user
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else if (error.response.status === 404) {
+          // Event Not Found
+          this.setState({
+            openSnackbar: true,
+            messages: buildErrorMessage(error.response.data.errors)
+          });
+        } else {
+          // Undefined Fatal Error
+          this.setState({
+            openSnackbar: true,
+            messages: [GET_SALES_LOG_FATAL_ERROR]
+          });
+        }
         console.error(error);
       });
   }
@@ -108,24 +151,36 @@ class SalesLogsDashboard extends Component {
     }
   }
 
+  onRequestFeedbackSnackbarClose = () => {
+    this.setState({openSnackbar: false});
+  }
+
   render() {
     return (
-      <Grid container justify="center">
-        <Grid item xs={10} style={styles.title}>
-          <Typography type="display1" gutterBottom align="center">
-            {SALES_LOG}
-          </Typography>
-        </Grid>
-        <Grid item xs={12}>
-          <Grid container justify="center">
-            <Grid item xs={12}>
-              <Timeline>
-                {this.renderTimelines()}
-              </Timeline>
+      <div>
+        <RedirectOnce to="/" if={this.state.redirectToRoot} />
+        <Grid container justify="center">
+          <Grid item xs={10} style={styles.title}>
+            <Typography type="display1" gutterBottom align="center">
+              {SALES_LOG}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Grid container justify="center">
+              <Grid item xs={12}>
+                <Timeline>
+                  {this.renderTimelines()}
+                </Timeline>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+        <FeedbackSnackbar
+          open={this.state.openSnackbar}
+          onRequestClose={this.onRequestFeedbackSnackbarClose}
+          messages={this.state.messages}
+        />
+      </div>
     );
   }
 }

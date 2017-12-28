@@ -56,5 +56,6 @@ export const YEN_MARK = `¥`;
 
 export const CONFIRM_LOGOUT = `${LOGOUT}（確認）`;
 export const CONFIRM_LOGOUT_TEXT = `本当に${LOGOUT}しますか？`;
+export const GET_SALES_LOG_FATAL_ERROR = `${SALES_LOG}の取得に失敗しました`;
 export const REGISTER_FATAL_ERROR = `${CHECKOUT}に失敗しました`;
 export const SIGNIN_FATAL_ERROR = `${LOGIN}に失敗しました`;
