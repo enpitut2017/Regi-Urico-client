@@ -54,7 +54,7 @@ class PaymentDialog extends Component {
   }
 
   handleCheckoutButton = event => {
-    this.props.onCheckoutButton();
+    this.props.onCheckoutButton(this.state.deposit);
   }
 
   render() {

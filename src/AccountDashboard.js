@@ -1,6 +1,5 @@
 import { Button, TextField, Typography } from 'material-ui';
 import Card, { CardContent } from 'material-ui/Card';
-import CloseIcon from 'material-ui-icons/Close';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import React, { Component } from 'react';
@@ -101,7 +100,7 @@ class AccountDashboard extends Component {
         password: this.state.password
       })
       .then(response => {
-        if (response.status == 200) {
+        if (response.status === 200) {
           // success to patch
           localStorage.setItem('name', response.data.name);
           this.setState({
@@ -151,7 +150,7 @@ class AccountDashboard extends Component {
         password: this.state.confirmDelete
       }})
       .then(response => {
-        if (response !== undefined && response !== null && response.status == 204) {
+        if (response !== undefined && response !== null && response.status === 204) {
           // success to delete
           localStorage.removeItem('authorizedToken');
           this.setState({redirectToRoot: true});

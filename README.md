@@ -12,7 +12,7 @@
 
 ## URL
 - Twitter: https://twitter.com/nearbuy_enpit17
-- アプリ:  http://210.140.221.144/
+- アプリ:  http://regi-urico.duckdns.org/
 - タスクボード: https://trello.com/b/h1uiYFdg/task-board
 - API側リポジトリ: https://github.com/enpitut2017/Regi-Urico-api
 

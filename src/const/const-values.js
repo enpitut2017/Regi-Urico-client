@@ -45,6 +45,8 @@ export const PLUS = `+`;
 export const POST_EVENTITEM_FATAL_ERROR = `アイテム追加に失敗しました`;
 export const REGI = `レジ`;
 export const RELOAD_NOTIFICATION = `ページを移動・リロードすると、現在の操作は失われます。本当によろしいですか？`;
+export const SALES_LOG = `売上履歴`;
+export const SALES_LOG_EMPTY = `まだ売上履歴がありません`;
 export const SAVE = `保存`;
 export const SERVICE_NAME = `Regi-Urico`;
 export const SUBTOTAL = `小計`;
@@ -55,5 +57,6 @@ export const YEN_MARK = `¥`;
 
 export const CONFIRM_LOGOUT = `${LOGOUT}（確認）`;
 export const CONFIRM_LOGOUT_TEXT = `本当に${LOGOUT}しますか？`;
+export const GET_SALES_LOG_FATAL_ERROR = `${SALES_LOG}の取得に失敗しました`;
 export const REGISTER_FATAL_ERROR = `${CHECKOUT}に失敗しました`;
 export const SIGNIN_FATAL_ERROR = `${LOGIN}に失敗しました`;

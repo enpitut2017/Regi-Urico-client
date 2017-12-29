@@ -3,15 +3,16 @@ import './App.css';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import React, { Component } from 'react';
 
-import Register from './Register';
-import DashBoard from './Dashboard';
-import ItemsDashboard from './ItemsDashboard';
-import EventDashboard from './EventDashboard';
 import AccountDashboard from './AccountDashboard';
-import CreateEventForm from './CreateEventForm';
-import LoginForm from './LoginForm';
 import CreateAccountForm from './CreateAccountForm';
+import CreateEventForm from './CreateEventForm';
+import DashBoard from './Dashboard';
+import EventDashboard from './EventDashboard';
+import ItemsDashboard from './ItemsDashboard';
+import LoginForm from './LoginForm';
 import NoMatch from './NoMatch';
+import Register from './Register';
+import SalesLogsDashboard from './SalesLogsDashboard';
 
 class App extends Component {
   render() {
@@ -25,6 +26,7 @@ class App extends Component {
           <Route path="/register" component={Register} />
           <Route path="/items_dashboard" component={ItemsDashboard} />
           <Route path="/event_dashboard" component={EventDashboard} />
+          <Route path="/sales_logs" component={SalesLogsDashboard} />
           <Route path="/account" component={AccountDashboard} />
           <Route component={NoMatch} />
         </Switch>

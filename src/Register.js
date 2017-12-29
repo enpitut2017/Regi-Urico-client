@@ -33,7 +33,6 @@ class Register extends Component {
       messages: [],
       redirectToRoot: false
     };
-    this.init(this.props.event_id);
   }
 
   componentWillReceiveProps = nextProps => {
@@ -133,12 +132,13 @@ class Register extends Component {
     this.setState({ open: false });
   }
 
-  onCheckoutButton = async () => {
+  onCheckoutButton = async (deposit) => {
     const instance = createXHRInstance();
     const url = `${BASE_URI}${REGISTER_URI}`;
     const data = {
       event_id: this.state.event_id,
-      items: this.postItems
+      items: this.postItems,
+      deposit: parseInt(deposit, 10),
     };
     const response = await instance.post(url, data).catch(error => {
       if (error.response === undefined) {

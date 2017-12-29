@@ -3,10 +3,11 @@ import { Link } from 'react-router-dom';
 import Grid from 'material-ui/Grid';
 import Paper from 'material-ui/Paper';
 import Typography from 'material-ui/Typography';
-import Card, { CardActions, CardContent, CardText } from 'material-ui/Card';
+import Card, { CardContent } from 'material-ui/Card';
 import RegiIcon from 'material-ui-icons/ShoppingCart';
 import ItemIcon from 'material-ui-icons/CardGiftcard';
 import EventIcon from 'material-ui-icons/Assignment';
+import ReceiptIcon from 'material-ui-icons/Payment';
 import { withNavigationBar } from './wrapper/withNavigationBar';
 import { withAuthorization } from './wrapper/withAuthorization';
 import { REGI, ITEMS_DASHBOARD, EVENTS_DASHBOARD } from './const/const-values';
@@ -67,6 +68,18 @@ class Dashboard extends Component {
                     <CardContent style={styles.cardContentStyle}>
                       <EventIcon style={{width: 70, height: 'auto'}}/>
                       <Typography type='subheading' style={styles.fontColor}>{EVENTS_DASHBOARD}</Typography>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </Grid>
+            </Grid>
+            <Grid container justify='center'>
+              <Grid item xs={10} style={styles.iconColor}>
+                <Link to='/sales_logs'>
+                  <Card>
+                    <CardContent style={styles.cardContentStyle}>
+                      <ReceiptIcon style={{width: 70, height: 'auto'}}/>
+                      <Typography type='headline' style={styles.fontColor}>売上履歴</Typography>
                     </CardContent>
                   </Card>
                 </Link>
