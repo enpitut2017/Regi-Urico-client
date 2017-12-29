@@ -34,13 +34,13 @@ class ItemsDashboard extends Component {
       items: [],
       editItem: {
         name: '',
-        price: '',
-        count: ''
+        price: 0,
+        count: 0
       },
       deleteItem: {
         name: '',
-        price: '',
-        count: ''
+        price: 0,
+        count: 0
       },
       redirectToRoot: false,
       openSnackbar: false,
@@ -160,8 +160,8 @@ class ItemsDashboard extends Component {
   }
 
   handleChange = (target, value) => {
-    if (Number.isNaN(value)) return;
     const newState = {};
+    if (Number.isNaN(value)) value = '';
     newState[target] = value;
     this.setState({
       editItem: Object.assign({}, this.state.editItem, newState)
